@@ -1,0 +1,145 @@
+package GUI;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import BLL.Admin;
+import BLL.Aficionado;
+
+
+import javax.swing.JLabel;
+
+
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JPasswordField;
+import javax.swing.ImageIcon;
+
+public class Index extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JTextField inpUser;
+	private JPasswordField inpPass;
+	private JLabel lblError;
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Index frame = new Index();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	
+
+	public Index() {
+		setTitle("Inicio de sesión");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(600, 480);
+		setLocationRelativeTo(null);
+		setResizable(false);
+
+		JPanel contentPane = new JPanel();
+		contentPane.setBackground(new Color(245, 245, 245));
+		contentPane.setLayout(null);
+		setContentPane(contentPane);
+
+		JLabel title = new JLabel("Liga Nacional de Básquet");
+		title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+		title.setBounds(140, 20, 400, 40);
+		contentPane.add(title);
+
+		JLabel lblLogo = new JLabel(new ImageIcon(Index.class.getResource("/img/lnb_logo.png")));
+		lblLogo.setBounds(40, 100, 200, 200);
+		contentPane.add(lblLogo);
+
+		JLabel lblUser = new JLabel("Usuario");
+		lblUser.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		lblUser.setBounds(300, 100, 250, 25);
+		contentPane.add(lblUser);
+
+		inpUser = new JTextField();
+		inpUser.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		inpUser.setBounds(300, 130, 250, 30);
+		contentPane.add(inpUser);
+
+		JLabel lblPass = new JLabel("Contraseña");
+		lblPass.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		lblPass.setBounds(300, 170, 250, 25);
+		contentPane.add(lblPass);
+
+		inpPass = new JPasswordField();
+		inpPass.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		inpPass.setBounds(300, 200, 250, 30);
+		contentPane.add(inpPass);
+
+		lblError = new JLabel("");
+		lblError.setForeground(Color.RED);
+		lblError.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+		lblError.setBounds(300, 235, 250, 20);
+		lblError.setVisible(false);
+		contentPane.add(lblError);
+
+		// Ingresar
+		JButton btnLogin = new JButton("Ingresar");
+		btnLogin.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		btnLogin.setBackground(new Color(0, 123, 255));
+		btnLogin.setForeground(Color.WHITE);
+		btnLogin.setBounds(300, 260, 250, 35);
+		btnLogin.addActionListener(e -> {
+			lblError.setVisible(false);
+			Aficionado user = Aficionado.login(inpUser.getText(), new String(inpPass.getPassword()));
+			if (user != null && user.getNombre() != null) {
+				new MainMenu(user).run(user);
+				dispose();
+			} else {
+				lblError.setText("Usuario o contraseña incorrectos.");
+				lblError.setVisible(true);
+			}
+		});
+		contentPane.add(btnLogin);
+
+		// Admin
+		JButton btnAdmin = new JButton("Ingresar como administrador");
+		btnAdmin.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		btnAdmin.setBackground(new Color(0, 123, 255));
+		btnAdmin.setForeground(Color.WHITE);
+		btnAdmin.setBounds(300, 305, 250, 35);
+		btnAdmin.addActionListener(e -> {
+			lblError.setVisible(false);
+			Admin admin = Admin.login(inpUser.getText(), new String(inpPass.getPassword()));
+			if (admin != null && admin.getNombre() != null) {
+				new AdminMenu(admin).run(admin);
+				dispose();
+			} else {
+				lblError.setText("Credenciales de administrador incorrectas.");
+				lblError.setVisible(true);
+			}
+		});
+		contentPane.add(btnAdmin);
+
+		// Registro
+		JButton btnRegister = new JButton("Crear cuenta");
+		btnRegister.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+		btnRegister.setBounds(300, 365, 250, 30);
+		btnRegister.addActionListener(e -> {
+			new Registro().run();
+			dispose();
+		});
+		contentPane.add(btnRegister);
+	}
+}

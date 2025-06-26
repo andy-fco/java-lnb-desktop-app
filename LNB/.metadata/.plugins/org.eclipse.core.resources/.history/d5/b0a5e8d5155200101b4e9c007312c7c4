@@ -1,0 +1,206 @@
+package GUI;
+
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Admin;
+import BLL.Jugador;
+import DLL.DLLJugador;
+
+public class EditarJugador extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+ 
+			public void run(Admin admin, Jugador j) {
+				try {
+					EditarJugador frame = new EditarJugador(admin, j);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+ 
+
+	/**
+	 * Create the frame.
+	 */
+	public EditarJugador(Admin admin, Jugador j) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 500);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNombre = new JLabel(j.getNombre()+" "+j.getApellido());
+		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		lblNombre.setBounds(83, 91, 338, 32);
+		contentPane.add(lblNombre);
+		
+		JLabel lblCamiseta = new JLabel("#"+j.getCamiseta());
+		lblCamiseta.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblCamiseta.setBounds(83, 124, 63, 32);
+		contentPane.add(lblCamiseta);
+		
+		JLabel lblPosicion = new JLabel(j.getPosicion());
+		lblPosicion.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblPosicion.setBounds(127, 124, 241, 32);
+		contentPane.add(lblPosicion);
+		
+		JLabel lblNacionalidad = new JLabel("<html>Acá vas a poder mejorar a tu jugador usando los puntos que llevás acumulados. Podés mejorar sus habilidades en cancha y su media. Por cada punto que tu jugador mejore en cualquier área, vas a tener que pagar con 10 de tus puntos. Mejorar habilidades o media tiene exactamente el mismo costo. Pensá con cuidado cómo querés que crezca tu jugador.\r\n</html>");
+		lblNacionalidad.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNacionalidad.setBounds(360, 146, 304, 280);
+		contentPane.add(lblNacionalidad);
+		
+		JLabel lblTiro = new JLabel("Tiro ");
+		lblTiro.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblTiro.setBounds(10, 187, 45, 32);
+		contentPane.add(lblTiro);
+		
+		JLabel lblVelocidad = new JLabel("Velocidad ");
+		lblVelocidad.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblVelocidad.setBounds(165, 187, 101, 32);
+		contentPane.add(lblVelocidad);
+		
+		JLabel lblDribling = new JLabel("Dribling ");
+		lblDribling.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblDribling.setBounds(10, 261, 85, 32);
+		contentPane.add(lblDribling);
+		
+		JLabel lblDefensa = new JLabel("Defensa ");
+		lblDefensa.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblDefensa.setBounds(165, 261, 93, 32);
+		contentPane.add(lblDefensa);
+		
+		JLabel lblPase = new JLabel("Pase ");
+		lblPase.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblPase.setBounds(10, 347, 63, 32);
+		contentPane.add(lblPase);
+		
+		JLabel lblSalto = new JLabel("Salto ");
+		lblSalto.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblSalto.setBounds(165, 347, 63, 32);
+		contentPane.add(lblSalto);
+		
+		JSpinner spinnerTiro = new JSpinner();
+		spinnerTiro.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		spinnerTiro.setModel(new SpinnerNumberModel(j.getTiro(), j.getTiro(), 99, 1));
+		spinnerTiro.setBounds(92, 187, 63, 32);
+		contentPane.add(spinnerTiro);
+		
+		JSpinner spinnerVelocidad = new JSpinner();
+		spinnerVelocidad.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		spinnerVelocidad.setModel(new SpinnerNumberModel(j.getVelocidad(), j.getVelocidad(), 99, 1));
+		spinnerVelocidad.setBounds(268, 189, 63, 32);
+		contentPane.add(spinnerVelocidad);
+		
+		JSpinner spinnerDribling = new JSpinner();
+		spinnerDribling.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		spinnerDribling.setModel(new SpinnerNumberModel(j.getDribling(), j.getDribling(), 99, 1));
+		spinnerDribling.setBounds(92, 261, 63, 32);
+		contentPane.add(spinnerDribling);
+		
+		JSpinner spinnerDefensa = new JSpinner();
+		spinnerDefensa.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		spinnerDefensa.setModel(new SpinnerNumberModel(j.getDefensa(), j.getDefensa(), 99, 1));
+		spinnerDefensa.setBounds(268, 261, 63, 32);
+		contentPane.add(spinnerDefensa);
+		
+		JSpinner spinnerPase = new JSpinner();
+		spinnerPase.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		spinnerPase.setModel(new SpinnerNumberModel(j.getPase(), j.getPase(), 99, 1));
+		spinnerPase.setBounds(92, 347, 63, 32);
+		contentPane.add(spinnerPase);
+		
+		JSpinner spinnerSalto = new JSpinner();
+		spinnerSalto.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		spinnerSalto.setModel(new SpinnerNumberModel(j.getSalto(), j.getSalto(), 99, 1));
+		spinnerSalto.setBounds(268, 347, 63, 32);
+		contentPane.add(spinnerSalto);
+		
+		JSpinner spinnerMedia = new JSpinner();
+		spinnerMedia.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		spinnerMedia.setModel(new SpinnerNumberModel(j.getMedia(), j.getMedia(), 99, 1));
+		spinnerMedia.setBounds(10, 93, 63, 32);
+		contentPane.add(spinnerMedia);
+		
+		
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GestionJugadores frame = new GestionJugadores(admin);
+				frame.run(admin);
+				dispose();
+			}
+		 });
+		btnVolver.setBounds(10, 10, 85, 21);
+		contentPane.add(btnVolver);
+		
+		JButton btnMejorar = new JButton("Mejorar");
+		btnMejorar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnMejorar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				int mejoras = (Integer) spinnerMedia.getValue() +
+					    (Integer) spinnerTiro.getValue() +
+					    (Integer) spinnerDribling.getValue() +
+					    (Integer) spinnerPase.getValue() +
+					    (Integer) spinnerVelocidad.getValue() +
+					    (Integer) spinnerDefensa.getValue() +
+					    (Integer) spinnerSalto.getValue();
+				
+				
+						
+						/*MyPlayer frame = new MyPlayer(user, myPlayer);
+						frame.run(user, myPlayer);
+						dispose();*/
+						
+					}
+				
+				
+				
+				
+			}
+		 });
+		btnMejorar.setBounds(247, 421, 93, 32);
+		contentPane.add(btnMejorar);
+		
+		
+		
+		
+		
+		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GestionJugadores frame = new GestionJugadores(admin);
+				frame.run(admin);
+				dispose();
+			}
+		 });
+		btnCancelar.setBounds(144, 421, 93, 32);
+		contentPane.add(btnCancelar);
+		
+	}
+
+}

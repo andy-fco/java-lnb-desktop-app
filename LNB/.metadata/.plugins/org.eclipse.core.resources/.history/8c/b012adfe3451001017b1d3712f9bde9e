@@ -1,0 +1,175 @@
+package GUI;
+
+ 
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Aficionado;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JSpinner;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.DefaultComboBoxModel;
+
+public class CrearMyPlayer extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField inpCiudad;
+
+	/**
+	 * Launch the application.
+	 */
+ 
+			public void run(Aficionado user) {
+				try {
+					CrearMyPlayer frame = new CrearMyPlayer(user);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+ 
+
+	/**
+	 * Create the frame.
+	 */
+	public CrearMyPlayer(Aficionado user) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 655);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Crear Mi Jugador");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 36));
+		lblNewLabel.setBounds(211, 24, 295, 53);
+		contentPane.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Número de Camiseta");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1.setBounds(25, 219, 209, 31);
+		contentPane.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_1_1 = new JLabel("Posición");
+		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1_1.setBounds(25, 298, 209, 31);
+		contentPane.add(lblNewLabel_1_1);
+		
+		JLabel lblNewLabel_1_2 = new JLabel("Nacionalidad");
+		lblNewLabel_1_2.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1_2.setBounds(25, 377, 209, 31);
+		contentPane.add(lblNewLabel_1_2);
+		
+		JLabel lblNewLabel_1_3 = new JLabel("Ciudad");
+		lblNewLabel_1_3.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1_3.setBounds(25, 456, 209, 31);
+		contentPane.add(lblNewLabel_1_3);
+		
+		JLabel lblNewLabel_1_4 = new JLabel("Altura");
+		lblNewLabel_1_4.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1_4.setBounds(391, 219, 209, 31);
+		contentPane.add(lblNewLabel_1_4);
+		
+		JLabel lblNewLabel_1_5 = new JLabel("Mano Hábil");
+		lblNewLabel_1_5.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1_5.setBounds(391, 298, 209, 31);
+		contentPane.add(lblNewLabel_1_5);
+		
+		JLabel lblNewLabel_1_6 = new JLabel("Especialidad");
+		lblNewLabel_1_6.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1_6.setBounds(391, 377, 209, 31);
+		contentPane.add(lblNewLabel_1_6);
+		
+		JLabel lblNewLabel_1_7 = new JLabel("Jugada Característica");
+		lblNewLabel_1_7.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblNewLabel_1_7.setBounds(391, 456, 258, 31);
+		contentPane.add(lblNewLabel_1_7);
+		
+		JLabel lblNewLabel_2 = new JLabel("<html>¿Estás list@ para empezar a codearte con los mejores jugadores del país? Acá vas a poder crear tu propio jugador con sus datos y estadísticas, que vas a poder ir mejorando canjeando los puntos que ganes usando la aplicación. Tu jugador va a compartir tus datos personales, ¡pero su manera de jugar te la dejamos a vos! Elegí con libertad, pero tené en cuenta que lo que elijas va a determinar tus estadísticas iniciales. </html>");
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblNewLabel_2.setBounds(24, 87, 666, 99);
+		contentPane.add(lblNewLabel_2);
+		
+		JButton btnCrear = new JButton("CREAR");
+		btnCrear.setBounds(481, 558, 209, 31);
+		contentPane.add(btnCrear);
+		
+		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int answ = JOptionPane.showOptionDialog(null, "¿Estás segur@ que querés cancelar?\nSe perderán los datos no guardados.",
+						"Cancelar", JOptionPane.YES_NO_OPTION, 3, null, null, null);
+				if (answ == 0) {
+					MainMenu frame = new MainMenu(user);
+					frame.run(user);
+					dispose();
+				}
+			}
+		 });
+		btnCancelar.setBounds(10, 573, 100, 21);
+		contentPane.add(btnCancelar);
+		
+		String[] posiciones = {"Base", "Escolta", "Alero", "Ala-Pivot", "Pivot"};
+		JComboBox<String> comboBoxPosicion = new JComboBox<>(posiciones);
+		comboBoxPosicion.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		comboBoxPosicion.setBounds(25, 334, 209, 33);
+		contentPane.add(comboBoxPosicion);
+		
+		JComboBox<String> comboBoxNacionalidad = new JComboBox<>();
+		comboBoxNacionalidad.setModel(new DefaultComboBoxModel<String>(new String[] {"Argentino", "Chileno", "Uruguayo", "Paraguayo", "Boliviano", "Brasilero", "Peruano", "Colombiano", "Ecuatoriano", "Venezolano", "Mexicano", "Español"}));
+		comboBoxNacionalidad.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		comboBoxNacionalidad.setBounds(25, 413, 209, 33);
+		contentPane.add(comboBoxNacionalidad);
+		
+		inpCiudad = new JTextField();
+		inpCiudad.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		inpCiudad.setBounds(25, 491, 209, 33);
+		contentPane.add(inpCiudad);
+		inpCiudad.setColumns(10);
+		
+		JComboBox<String> comboBoxEspecialidad = new JComboBox<>();
+		comboBoxEspecialidad.setModel(new DefaultComboBoxModel<String>(new String[] {"Tiro", "Volcadas", "Defensa", "Rebotes", "Asistencias", "Robos", "Tapas", "Poste bajo", "Pick and Roll", "Uno contra uno"}));
+		comboBoxEspecialidad.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		comboBoxEspecialidad.setBounds(391, 413, 209, 33);
+		contentPane.add(comboBoxEspecialidad);
+		
+		JComboBox<String> comboBoxJugada = new JComboBox<>();
+		comboBoxJugada.setModel(new DefaultComboBoxModel<String>(new String[] {"Salida de tirador", "Triple", "Pick and pop", "Tiro de media distancia", "Fadeaway", "Flotadora", "Pick and roll", "Crossover", "No-look pass", "Volcada en transición", "Volcada", "Gancho", ""}));
+		comboBoxJugada.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		comboBoxJugada.setBounds(391, 491, 209, 33);
+		contentPane.add(comboBoxJugada);
+		
+		JSpinner spinnerCamiseta = new JSpinner();
+		spinnerCamiseta.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		spinnerCamiseta.setModel(new SpinnerNumberModel(0, 0, 99, 1));
+		spinnerCamiseta.setBounds(25, 257, 75, 31);
+		contentPane.add(spinnerCamiseta);
+		
+		JSpinner spinnerAltura = new JSpinner();
+		spinnerAltura.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		spinnerAltura.setModel(new SpinnerNumberModel(1.80, 1.40, 2.15, 0.01));
+		spinnerAltura.setBounds(391, 257, 115, 31);
+		contentPane.add(spinnerAltura);
+		
+		JComboBox<String> comboBoxMano = new JComboBox<>();
+		comboBoxMano.setModel(new DefaultComboBoxModel<String>(new String[] {"Derecha", "Izquierda"}));
+		comboBoxMano.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		comboBoxMano.setBounds(391, 334, 209, 33);
+		contentPane.add(comboBoxMano);
+	}
+}

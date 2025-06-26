@@ -1,0 +1,105 @@
+package GUI;
+
+ 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Admin;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+
+public class AdminMenu extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	
+			public void run(Admin admin) {
+				try {
+					AdminMenu frame = new AdminMenu(admin);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+
+	/**
+	 * Create the frame.
+	 */
+	public AdminMenu(Admin admin) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 477);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Menú de Administrador");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 38));
+		lblNewLabel.setBounds(160, 31, 414, 91);
+		contentPane.add(lblNewLabel);
+		
+		JButton btnForo = new JButton("Foro");
+		btnForo.setBounds(40, 304, 156, 36);
+		contentPane.add(btnForo);
+		
+		JButton btnEquipos = new JButton("Equipos");
+		btnEquipos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GestionEquipos frame = new GestionEquipos(admin);
+				frame.run(admin);
+				dispose();
+			}
+		 });
+		btnEquipos.setBounds(206, 304, 156, 36);
+		contentPane.add(btnEquipos);
+		
+		JButton btnJugadores = new JButton("Jugadores");
+		btnJugadores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GestionJugadores frame = new GestionJugadores(admin);
+				frame.run(admin);
+				dispose();
+			}
+		 });
+		btnJugadores.setBounds(373, 304, 156, 36);
+		contentPane.add(btnJugadores);
+		
+		JButton btnPanelGestion = new JButton("Gestión de Usuarios");
+		btnPanelGestion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GestionUsers panelGestion = new GestionUsers(admin);
+				panelGestion.run(admin);
+				dispose();
+			}
+		 });
+		btnPanelGestion.setBounds(539, 304, 156, 36);
+		contentPane.add(btnPanelGestion);
+		
+		JButton btnCerrarSesion = new JButton("Cerrar Sesión");
+		btnCerrarSesion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int answ = JOptionPane.showOptionDialog(null, "¿Estás segur@ que deseás cerrar sesión?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION, 3, null, null, null);
+				if (answ == 0) {
+					dispose();
+					JOptionPane.showMessageDialog(btnCerrarSesion, "¡Hasta la próxima, "+admin.getNombre()+"!");
+				}
+			}
+		 });
+		btnCerrarSesion.setBounds(564, 389, 131, 41);
+		contentPane.add(btnCerrarSesion);
+	}
+}

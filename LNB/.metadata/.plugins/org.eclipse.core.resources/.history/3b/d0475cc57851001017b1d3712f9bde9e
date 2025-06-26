@@ -1,0 +1,217 @@
+package GUI;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Aficionado;
+import BLL.Jugador;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import java.awt.Color;
+
+public class Perfil extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+
+	public void run(Aficionado user) {
+		try {
+			Perfil frame = new Perfil(user);
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Perfil(Aficionado user) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 820, 477);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JLabel lblNewLabel = new JLabel("Mi Perfil");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 32));
+		lblNewLabel.setBounds(296, 10, 124, 41);
+		contentPane.add(lblNewLabel);
+
+		JLabel lblNombre = new JLabel(user.getNombre() + " " + user.getApellido());
+		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		lblNombre.setBounds(23, 90, 219, 33);
+		contentPane.add(lblNombre);
+
+		JLabel lblUsername = new JLabel(user.getId());
+		lblUsername.setForeground(Color.GRAY);
+		lblUsername.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblUsername.setBounds(23, 119, 219, 33);
+		contentPane.add(lblUsername);
+
+		JLabel lblMail = new JLabel("Mail: " + user.getEmail());
+		lblMail.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblMail.setBounds(23, 170, 219, 33);
+		contentPane.add(lblMail);
+
+		JLabel lblPass = new JLabel("Contraseña: ********");
+		lblPass.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblPass.setBounds(23, 213, 219, 33);
+		contentPane.add(lblPass);
+
+		JLabel lblDOB = new JLabel("Fecha de Nacimiento: " + user.getdOfBirth());
+		lblDOB.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblDOB.setBounds(23, 254, 311, 33);
+		contentPane.add(lblDOB);
+
+		JLabel lblJugador = new JLabel("Jugador Favorito: ");
+		if (user.getJugadorFavorito() != null) {
+			lblJugador.setText("Jugador Favorito: " + user.getJugadorFavorito().getNombre() + " "
+					+ user.getJugadorFavorito().getApellido());
+		}
+		lblJugador.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblJugador.setBounds(23, 297, 311, 33);
+		contentPane.add(lblJugador);
+
+		JLabel lblEquipo = new JLabel("Equipo Favorito: ");
+		if (user.getEquipoFavorito() != null) {
+			lblEquipo.setText("Equipo Favorito: " + user.getEquipoFavorito().getNombre());
+		}
+		lblEquipo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblEquipo.setBounds(23, 340, 311, 33);
+		contentPane.add(lblEquipo);
+
+		JLabel lblQuinteto = new JLabel("Quinteto Ideal");
+		lblQuinteto.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblQuinteto.setBounds(572, 140, 116, 33);
+		contentPane.add(lblQuinteto);
+
+		JButton btnEditar = new JButton("Editar");
+		btnEditar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EditarPerfil frame = new EditarPerfil(user);
+				frame.run(user);
+				dispose();
+			}
+		});
+
+		btnEditar.setBounds(664, 10, 132, 33);
+		contentPane.add(btnEditar);
+
+		JButton btnElegirJugador = new JButton("Elegir");
+		btnElegirJugador.setBounds(169, 297, 105, 27);
+		contentPane.add(btnElegirJugador);
+
+		JButton btnElegirEquipo = new JButton("Elegir");
+		btnElegirEquipo.setBounds(169, 340, 105, 27);
+		contentPane.add(btnElegirEquipo);
+
+		JButton btnCambiarJugador = new JButton("Cambiar");
+		btnCambiarJugador.setBounds(344, 297, 105, 27);
+		contentPane.add(btnCambiarJugador);
+
+		JButton btnCambiarEquipo = new JButton("Cambiar");
+		btnCambiarEquipo.setBounds(344, 340, 105, 27);
+		contentPane.add(btnCambiarEquipo);
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(10, 10, 85, 21);
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainMenu frame = new MainMenu(user);
+				frame.run(user);
+				dispose();
+			}
+		});
+		contentPane.add(btnVolver);
+		
+		JLabel lblBase = new JLabel("Base: ");
+		lblBase.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblBase.setBounds(458, 180, 311, 33);
+		contentPane.add(lblBase);
+		
+		JLabel lblEscolta = new JLabel("Escolta:");
+		lblEscolta.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblEscolta.setBounds(458, 226, 311, 33);
+		contentPane.add(lblEscolta);
+		
+		JLabel lblAlero = new JLabel("Alero: ");
+		lblAlero.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblAlero.setBounds(459, 267, 311, 33);
+		contentPane.add(lblAlero);
+		
+		JLabel lblAlapivot = new JLabel("Ala-Pivot:");
+		lblAlapivot.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblAlapivot.setBounds(458, 310, 311, 33);
+		contentPane.add(lblAlapivot);
+		
+		JLabel lblPivot = new JLabel("Pivot:");
+		lblPivot.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblPivot.setBounds(458, 353, 311, 33);
+		contentPane.add(lblPivot);
+		
+		if (user.getQuintetoIdeal()!=null) {
+			Jugador base = user.getQuintetoIdeal().get(0);
+			Jugador escolta = user.getQuintetoIdeal().get(1);
+			Jugador alero = user.getQuintetoIdeal().get(2);
+			Jugador alaPivot = user.getQuintetoIdeal().get(3);
+			Jugador pivot = user.getQuintetoIdeal().get(4);
+			lblBase.setText("Base: "+base.getNombre()+" "+base.getApellido()+ " - "+base.getMedia());
+			lblEscolta.setText("Escolta: "+escolta.getNombre()+" "+escolta.getApellido()+ " - "+escolta.getMedia());
+			lblAlero.setText("Alero: "+alero.getNombre()+" "+alero.getApellido()+ " - "+alero.getMedia());
+			lblAlapivot.setText("Ala-Pivot: "+alaPivot.getNombre()+" "+alaPivot.getApellido()+ " - "+alaPivot.getMedia());
+			lblPivot.setText("Pivot: "+pivot.getNombre()+" "+pivot.getApellido()+ " - "+pivot.getMedia());
+		}
+		
+		JButton btnElegirQuinteto = new JButton("Elegir");
+		btnElegirQuinteto.setBounds(698, 141, 78, 30);
+		btnElegirQuinteto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ElegirQuinteto frame = new ElegirQuinteto(user);
+				frame.run(user);
+				dispose();
+			}
+		});
+		contentPane.add(btnElegirQuinteto);
+		
+		JButton btnCambiarQuinteto = new JButton("Cambiar");
+		btnCambiarQuinteto.setBounds(698, 141, 78, 30);
+		contentPane.add(btnCambiarQuinteto);
+
+		if (user.getJugadorFavorito() == null) {
+			btnCambiarJugador.setVisible(false);
+		} else {
+			btnElegirJugador.setVisible(false);
+		}
+		
+		if (user.getEquipoFavorito() == null) {
+			btnCambiarEquipo.setVisible(false);
+		} else {
+			btnElegirEquipo.setVisible(false);
+		}
+		
+		if(user.getQuintetoIdeal().isEmpty()) {
+			btnCambiarQuinteto.setVisible(false);
+		}else {
+			btnElegirQuinteto.setVisible(false);
+		}
+	}
+
+}

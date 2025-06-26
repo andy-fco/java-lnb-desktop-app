@@ -1,0 +1,91 @@
+package BLL;
+
+ 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+public class Evento {
+
+	//Atributos 
+	private String titulo;
+	private String descripcion;
+	private LocalDateTime  fechaYHora;
+	private ArrayList<Aficionado> inscriptos;
+	private int capMax;
+	
+	//Constructor
+	public Evento(String titulo, String descripcion, LocalDateTime fechaYHora, ArrayList<Aficionado> inscriptos, int capMax) {
+		super();
+		this.titulo = titulo;
+		this.descripcion = descripcion;
+		this.fechaYHora = fechaYHora;
+		this.inscriptos = inscriptos;
+		this.capMax = capMax;
+	}
+	
+	public Evento(String titulo, String descripcion, LocalDateTime fechaYHora,  int capMax) {
+		super();
+		this.titulo = titulo;
+		this.descripcion = descripcion;
+		this.fechaYHora = fechaYHora;
+		this.capMax = capMax;
+	}
+	 
+
+	
+	//Getters & Setters
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public LocalDateTime getFechaYHora() {
+		return fechaYHora;
+	}
+
+	public void setFechaYHora(LocalDateTime fechaYHora) {
+		this.fechaYHora = fechaYHora;
+	}
+
+	public ArrayList<Aficionado> getInscriptos() {
+		return inscriptos;
+	}
+
+	public void setInscriptos(ArrayList<Aficionado> inscriptos) {
+		this.inscriptos = inscriptos;
+	}
+
+	public int getCapMax() {
+		return capMax;
+	}
+
+	public void setCapMax(int capMax) {
+		this.capMax = capMax;
+	}
+
+	
+	//To String
+	@Override
+	public String toString() {
+		return "Evento [titulo=" + titulo + ", descripcion=" + descripcion + ", fechaYHora=" + fechaYHora
+				+ ", inscriptos=" + inscriptos + ", capMax=" + capMax + "]";
+	}
+	
+	
+	
+	
+	
+	
+	
+}

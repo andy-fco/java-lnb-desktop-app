@@ -1,0 +1,478 @@
+package GUI;
+
+ 
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import BLL.Admin;
+import BLL.Aficionado;
+import BLL.Articulo;
+import BLL.Evento;
+ 
+import DLL.DLLArticulo;
+import DLL.DLLEvento;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+
+import javax.swing.JTabbedPane;
+
+import java.awt.Component;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+
+public class GestionForo extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTable table;
+	private DefaultTableModel model;
+	private JTable table_1;
+	private DefaultTableModel model_1;
+	private JTextField txtBuscar;
+	private Articulo articuloSeleccionado;
+	private Evento eventoSeleccionado;
+
+	/**
+	 * Launch the application.
+	 */
+
+	public void run(Admin admin) {
+		try {
+			GestionForo frame = new GestionForo(admin);
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public GestionForo(Admin admin) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 900, 510);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+		contentPane.setLayout(null);
+		setLocationRelativeTo(null);
+		setContentPane(contentPane);
+
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		tabbedPane.setBounds(10, 10, 866, 427);
+		contentPane.add(tabbedPane);
+
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Artículos", null, panel, null);
+		panel.setLayout(null);
+		
+		txtBuscar = new JTextField();
+		txtBuscar.setBounds(10, 10, 460, 28);
+		panel.add(txtBuscar);
+		txtBuscar.setColumns(10);
+		panel.add(txtBuscar);
+		
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnBuscar.setBounds(480, 10, 85, 28);
+		btnBuscar.addActionListener(e -> {
+			String texto = txtBuscar.getText().trim();
+			buscarArticulos(texto);
+		});
+		panel.add(btnBuscar);
+
+		JLabel lblSeleccionado = new JLabel((String) null);
+		lblSeleccionado.setBounds(11, 268, 760, 20);
+		panel.add(lblSeleccionado);
+
+		JButton btnAgregar = new JButton("Agregar");
+		btnAgregar.setBounds(10, 373, 150, 40);
+
+		btnAgregar.addActionListener(e -> {
+			JTextField tituloField = new JTextField();
+			JTextArea descArea = new JTextArea(20, 80); // 5 filas, 20 columnas aprox
+			descArea.setLineWrap(true);
+			descArea.setWrapStyleWord(true);
+			JScrollPane descScroll = new JScrollPane(descArea);
+			
+			
+
+			Object[] fields = { "Título:", tituloField, "Descripción:", descArea};
+
+			int option = JOptionPane.showConfirmDialog(null, fields, "Agregar Artículo", JOptionPane.OK_CANCEL_OPTION);
+
+			if (option == JOptionPane.OK_OPTION) {
+				
+				if (tituloField.getText().trim().isEmpty() || descArea.getText().trim().isEmpty()) {
+				    JOptionPane.showMessageDialog(null, "Los campos no pueden estar vacíos.");
+				    return;
+				}
+				
+				String fecha = java.time.LocalDate.now().toString();
+				
+				if (DLLArticulo.crearArticulo(new Articulo(tituloField.getText(), descArea.getText(), fecha))) {
+					JOptionPane.showMessageDialog(null, "Artículo creado correctamente");
+					cargarTablaArticulos();
+				} else {
+					JOptionPane.showMessageDialog(null, "Hubo un error al cargar el artículo, por favor intentalo más tarde");
+				}
+
+				
+			}
+		});
+		panel.add(btnAgregar);
+
+		JButton btnEditar = new JButton("Editar");
+		btnEditar.setBounds(170, 373, 150, 40);
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (articuloSeleccionado != null) {
+					JTextField tituloField = new JTextField();
+					JTextArea descArea = new JTextArea(20, 80); // 5 filas, 20 columnas aprox
+					descArea.setLineWrap(true);
+					descArea.setWrapStyleWord(true);
+					
+					
+					
+					tituloField.setText(articuloSeleccionado.getTitulo());
+					descArea.setText(articuloSeleccionado.getDescripcion());
+					
+					Object[] fields = { "Título:", tituloField, "Descripción:", descArea};
+
+					int option = JOptionPane.showConfirmDialog(null, fields, "Editar Artículo", JOptionPane.OK_CANCEL_OPTION);
+
+					if (option == JOptionPane.OK_OPTION) {
+						
+						if (tituloField.getText().trim().isEmpty() || descArea.getText().trim().isEmpty()) {
+						    JOptionPane.showMessageDialog(null, "Los campos no pueden estar vacíos.");
+						    return;
+						}
+						
+						
+						
+						if (DLLArticulo.editarArticulo(new Articulo(tituloField.getText(), descArea.getText(), articuloSeleccionado.getFecha()),
+								articuloSeleccionado.getTitulo())) {
+							JOptionPane.showMessageDialog(null, "Artículo editado correctamente");
+							cargarTablaArticulos();
+							articuloSeleccionado = null;
+							lblSeleccionado.setText("");
+						} else {
+							JOptionPane.showMessageDialog(null, "Hubo un error al editar el artículo, por favor intentalo más tarde");
+						}
+
+						
+					}
+				} else {
+					lblSeleccionado.setText("Seleccione un artículo");
+					;
+				}
+
+			}
+		});
+		panel.add(btnEditar);
+
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.setBounds(330, 373, 150, 40);
+		btnEliminar.addActionListener(e -> {
+
+			if (articuloSeleccionado != null) {
+				int ans = JOptionPane.showOptionDialog(null, "¿Estás seguro de que querés eliminar este artículo?",
+						"Confirmar acción", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 1);
+
+				if (ans == 0) {
+					if (DLLArticulo.eliminarArticulo(articuloSeleccionado)) {
+						JOptionPane.showMessageDialog(null, "Artículo eliminado correctamente.");
+						cargarTablaArticulos();
+						articuloSeleccionado=null;
+						lblSeleccionado.setText("");
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"Error al eliminar artículo, por favor vuelva a intentarlo más tarde.");
+					}
+				}
+			} else {
+				lblSeleccionado.setText("Seleccione un artículo");
+				;
+			}
+
+			
+
+		});
+		panel.add(btnEliminar);
+
+		table = new JTable();
+		model = new DefaultTableModel(new Object[][] {}, new String[] { "Fecha", "Título", "Descripcion" }) {
+			Class[] columnTypes = new Class[] { String.class, String.class, String.class };
+
+			public Class<?> getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		};
+		
+		  
+		table.setModel(model);
+		table.getColumnModel().getColumn(0).setPreferredWidth(80);  
+		table.getColumnModel().getColumn(1).setPreferredWidth(250);  
+		table.getColumnModel().getColumn(2).setPreferredWidth(400);
+
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setBounds(0, 59, 745, 199);
+
+		panel.add(scrollPane);
+
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab("Eventos", null, panel_1, null);
+		panel_1.setLayout(null);
+
+		JTextField txtBuscar_1 = new JTextField();
+		txtBuscar_1.setColumns(10);
+		txtBuscar_1.setBounds(11, 10, 459, 28);
+		panel_1.add(txtBuscar_1);
+
+		JButton btnBuscar_1 = new JButton("Buscar");
+		btnBuscar_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnBuscar_1.setBounds(480, 10, 85, 28);
+		btnBuscar_1.addActionListener(e -> {
+			String texto = txtBuscar_1.getText().trim();
+			buscarEventos(texto);
+		});
+		panel_1.add(btnBuscar_1);
+
+		JScrollPane scrollPane_1 = new JScrollPane((Component) null);
+		scrollPane_1.setBounds(0, 59, 745, 199);
+		panel_1.add(scrollPane_1);
+
+		table_1 = new JTable();
+		scrollPane_1.setViewportView(table_1);
+		model_1 = new DefaultTableModel(new Object[][] {}, new String[] { "Fecha", "Título", "Capacidad", "Descripcion" }) {
+			Class[] columnTypes = new Class[] { String.class, String.class, Integer.class, String.class };
+
+			public Class<?> getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		};
+		table_1.setModel(model_1);
+		table_1.getColumnModel().getColumn(0).setPreferredWidth(100);  
+		table_1.getColumnModel().getColumn(1).setPreferredWidth(200);  
+		table_1.getColumnModel().getColumn(2).setPreferredWidth(70); 
+		table_1.getColumnModel().getColumn(3).setPreferredWidth(400); 
+		
+
+		JLabel lblSeleccionado_1 = new JLabel("");
+		lblSeleccionado_1.setBounds(11, 268, 760, 20);
+		panel_1.add(lblSeleccionado_1);
+
+		JButton btnAgregar_1 = new JButton("Agregar");
+		btnAgregar_1.setBounds(10, 373, 150, 40);
+		btnAgregar_1.addActionListener(e -> {
+			JTextField tituloField = new JTextField();
+			JTextField fechaField = new JTextField();
+			JTextField horaField = new JTextField();
+			JSpinner capSpinner = new JSpinner(new SpinnerNumberModel(0,0,1000,1));
+			JTextArea descArea = new JTextArea(10, 40);  
+			descArea.setLineWrap(true);
+			descArea.setWrapStyleWord(true);
+			JScrollPane descScroll = new JScrollPane(descArea);
+			
+			
+
+			Object[] fields = { "Título:", tituloField,"Fecha [YYYY-MM-DD]:", fechaField, "Hora [HH:MM]: ", horaField,
+					"Capacidad: ", capSpinner, "Descripción:", descScroll,};
+
+			int option = JOptionPane.showConfirmDialog(null, fields, "Agregar Artículo", JOptionPane.OK_CANCEL_OPTION);
+
+			if (option == JOptionPane.OK_OPTION) {
+				
+				if (tituloField.getText().trim().isEmpty() || descArea.getText().trim().isEmpty()||
+						fechaField.getText().trim().isEmpty() || horaField.getText().trim().isEmpty()
+						||(Integer) capSpinner.getValue()==0) {
+				    JOptionPane.showMessageDialog(null, "Los campos no pueden estar vacíos.");
+				    return;
+				}
+				
+				String fechaTexto = fechaField.getText().trim();     
+				String horaTexto = horaField.getText().trim();      
+
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				LocalDateTime fechaHora = LocalDateTime.parse(fechaTexto + " " + horaTexto, formatter);
+				
+				if (DLLEvento.crearEvento(new Evento(tituloField.getText(), descArea.getText(), fechaHora, (Integer) capSpinner.getValue()))) {
+					JOptionPane.showMessageDialog(null, "Evento creado correctamente");
+					cargarTablaArticulos();
+				} else {
+					JOptionPane.showMessageDialog(null, "Hubo un error al cargar el evento, por favor intentalo más tarde");
+				}
+
+				
+			}
+		});
+		panel_1.add(btnAgregar_1);
+
+		JButton btnEditar_1 = new JButton("Editar");
+		btnEditar_1.setBounds(170, 373, 150, 40);
+		btnEditar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (eventoSeleccionado != null) {
+					/*EditarAdmin editar = new EditarAdmin(eventoSeleccionado, admin);
+					editar.run(eventoSeleccionado, admin);
+					dispose();*/
+				} else {
+					lblSeleccionado_1.setText("Seleccione un evento");
+					;
+				}
+
+			}
+		});
+		panel_1.add(btnEditar_1);
+
+		JButton btnEliminar_1 = new JButton("Eliminar");
+		btnEliminar_1.setBounds(330, 373, 150, 40);
+		btnEliminar_1.addActionListener(e -> {
+
+			if (eventoSeleccionado != null) {
+				int ans = JOptionPane.showOptionDialog(null, "¿Estás seguro de que querés eliminar este evento?",
+						"Confirmar acción", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 1);
+
+				if (ans == 0) {
+					if (DLLEvento.eliminarEvento(eventoSeleccionado)) {
+						JOptionPane.showMessageDialog(btnEliminar, "Evento eliminado correctamente.");
+					} else {
+						JOptionPane.showMessageDialog(btnEliminar,
+								"Error al eliminar evento, por favor vuelva a intentarlo más tarde.");
+					}
+				}
+			} else {
+				lblSeleccionado_1.setText("Seleccione un evento");
+				;
+			}
+
+			cargarTablaEventos();
+
+		});
+		panel_1.add(btnEliminar_1);
+
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(10, 442, 85, 21);
+		btnVolver.addActionListener(e -> {
+			new AdminMenu(admin).run(admin);
+			dispose();
+		});
+		contentPane.add(btnVolver);
+
+		// Acción al seleccionar fila
+		table.getSelectionModel().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int row = table.getSelectedRow();
+				if (row != -1) {
+					articuloSeleccionado = new Articulo((String) model.getValueAt(row, 1),
+							(String) model.getValueAt(row, 2), (String) model.getValueAt(row, 0)
+
+					);
+					lblSeleccionado.setText("Seleccionado: " + articuloSeleccionado.getTitulo() + " - Fecha:  "
+							+ articuloSeleccionado.getFecha());
+
+					
+
+				}
+			}
+		});
+
+		table_1.getSelectionModel().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int row = table_1.getSelectedRow();
+				if (row != -1) {
+					String fechaStr = (String) model_1.getValueAt(row, 0);
+					String titulo = (String) model_1.getValueAt(row, 1);
+					int capMax = (int) model_1.getValueAt(row, 2);
+					String descripcion = (String) model_1.getValueAt(row, 3);
+
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+					LocalDateTime fecha = LocalDateTime.parse(fechaStr, formatter);
+
+					eventoSeleccionado = new Evento(titulo, descripcion, fecha, capMax);
+
+					lblSeleccionado_1.setText("Seleccionado: " + titulo + ", Fecha: " + fechaStr);
+				}
+			}
+		});
+
+
+		// Cargar datos
+		cargarTablaArticulos();
+		cargarTablaEventos();
+	}
+
+	private void cargarTablaArticulos() {
+
+		LinkedList<Articulo> articulos = DLLArticulo.mostrarArticulos().stream()
+				.sorted(Comparator.comparing(Articulo::getFecha, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		model.setRowCount(0);
+		for (Articulo a : articulos) {
+			model.addRow(new Object[] { a.getFecha(), a.getTitulo(), a.getDescripcion() });
+		}
+	}
+
+	private void cargarTablaEventos() {
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+	    
+	    LinkedList<Evento> eventos = DLLEvento.mostrarEventos().stream()
+	            .sorted(Comparator.comparing(Evento::getFechaYHora))
+	            .collect(Collectors.toCollection(LinkedList::new));
+
+	    model_1.setRowCount(0);
+	    for (Evento e : eventos) {
+	        String fechaFormateada = e.getFechaYHora().format(formatter);
+	        model_1.addRow(new Object[] { fechaFormateada, e.getTitulo(), e.getDescripcion() });
+	    }
+	}
+
+
+	private void buscarArticulos(String texto) {
+		LinkedList<Articulo> articulos = DLLArticulo.mostrarArticulos().stream()
+				.filter(a -> a.getTitulo().toLowerCase().contains(texto.toLowerCase())
+						|| a.getDescripcion().toLowerCase().contains(texto.toLowerCase()))
+				.sorted(Comparator.comparing(Articulo::getFecha, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		model.setRowCount(0);
+		for (Articulo a : articulos) {
+			model.addRow(new Object[] { a.getFecha(), a.getTitulo(), a.getDescripcion() });
+		}
+	}
+
+	private void buscarEventos(String texto) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+		
+		LinkedList<Evento> eventos = DLLEvento.mostrarEventos().stream()
+				.filter(a -> a.getTitulo().toLowerCase().contains(texto.toLowerCase()))
+				.sorted(Comparator.comparing(Evento::getTitulo, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		model_1.setRowCount(0);
+	    for (Evento e : eventos) {
+	        String fechaFormateada = e.getFechaYHora().format(formatter);
+	        model_1.addRow(new Object[] { fechaFormateada, e.getTitulo(), e.getDescripcion() });
+		}
+	}
+}

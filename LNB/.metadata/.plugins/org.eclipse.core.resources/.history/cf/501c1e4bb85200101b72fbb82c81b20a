@@ -1,0 +1,398 @@
+package GUI;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import BLL.Admin;
+import BLL.Aficionado;
+import BLL.Articulo;
+import BLL.Evento;
+import DLL.DLLAdmin;
+import DLL.DLLAficionado;
+import DLL.DLLArticulo;
+import DLL.DLLEvento;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+
+import javax.swing.JTabbedPane;
+
+import java.awt.Component;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+
+public class GestionForo extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTable table;
+	private DefaultTableModel model;
+	private JTable table_1;
+	private DefaultTableModel model_1;
+	private JTextField txtBuscar;
+	private Articulo articuloSeleccionado;
+	private Evento eventoSeleccionado;
+
+	/**
+	 * Launch the application.
+	 */
+
+	public void run(Admin admin) {
+		try {
+			GestionForo frame = new GestionForo(admin);
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public GestionForo(Admin admin) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 900, 510);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+		contentPane.setLayout(null);
+		setLocationRelativeTo(null);
+		setContentPane(contentPane);
+
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		tabbedPane.setBounds(10, 10, 866, 443);
+		contentPane.add(tabbedPane);
+
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Aficionados", null, panel, null);
+		panel.setLayout(null);
+
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnBuscar.setBounds(480, 10, 85, 28);
+		btnBuscar.addActionListener(e -> {
+			String texto = txtBuscar.getText().trim();
+			buscarArticulos(texto);
+		});
+		panel.add(btnBuscar);
+
+		JLabel lblSeleccionado = new JLabel((String) null);
+		lblSeleccionado.setBounds(11, 268, 760, 20);
+		panel.add(lblSeleccionado);
+
+		JButton btnAgregar = new JButton("Agregar");
+		btnAgregar.setBounds(10, 373, 150, 40);
+
+		btnAgregar.addActionListener(e -> {
+			JTextField nombreField = new JTextField();
+			JTextField apellidoField = new JTextField();
+			JTextField idField = new JTextField();
+			JPasswordField passField = new JPasswordField();
+			JPasswordField pass2Field = new JPasswordField();
+			JTextField emailField = new JTextField();
+			JTextField dobField = new JTextField();
+
+			Object[] fields = { "Nombre:", nombreField, "Apellido:", apellidoField, "ID:", idField, "Contraseña:",
+					passField, "Repetir contraseña:", pass2Field, "Email:", emailField,
+					"Fecha de Nacimiento [YYYY-MM-DD]:", dobField };
+
+			int option = JOptionPane.showConfirmDialog(null, fields, "Agregar Usuario", JOptionPane.OK_CANCEL_OPTION);
+
+			if (option == JOptionPane.OK_OPTION) {
+
+				Aficionado.registro(nombreField.getText(), apellidoField.getText(), idField.getText(),
+						passField.getText(), pass2Field.getText(), emailField.getText(), dobField.getText());
+				cargarTablaArticulos();
+			}
+		});
+		panel.add(btnAgregar);
+
+		JButton btnEditar = new JButton("Editar");
+		btnEditar.setBounds(170, 373, 150, 40);
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (articuloSeleccionado != null) {
+					/*EditarAficionado editar = new EditarAficionado(articuloSeleccionado, admin);
+					editar.run(articuloSeleccionado, admin);
+					dispose();*/
+				} else {
+					lblSeleccionado.setText("Seleccione un aficionado");
+					;
+				}
+
+			}
+		});
+		panel.add(btnEditar);
+
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.setBounds(330, 373, 150, 40);
+		btnEliminar.addActionListener(e -> {
+
+			if (articuloSeleccionado != null) {
+				int ans = JOptionPane.showOptionDialog(null, "¿Estás seguro de que querés eliminar este aficionado?",
+						"Confirmar acción", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 1);
+
+				if (ans == 0) {
+					if (DLLArticulo.eliminarArticulo(articuloSeleccionado)) {
+						JOptionPane.showMessageDialog(btnEliminar, "Aficionado eliminado correctamente.");
+					} else {
+						JOptionPane.showMessageDialog(btnEliminar,
+								"Error al eliminar usuario, por favor vuelva a intentarlo más tarde.");
+					}
+				}
+			} else {
+				lblSeleccionado.setText("Seleccione un aficionado");
+				;
+			}
+
+			cargarTablaAficionado();
+
+		});
+		panel.add(btnEliminar);
+
+		table = new JTable();
+		model = new DefaultTableModel(new Object[][] {}, new String[] { "Fecha", "Título", "Descripcion" }) {
+			Class[] columnTypes = new Class[] { String.class, String.class, String.class };
+
+			public Class<?> getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		};
+		
+		table.getColumnModel().getColumn(0).setPreferredWidth(80);  
+		table.getColumnModel().getColumn(1).setPreferredWidth(250);  
+		table.getColumnModel().getColumn(2).setPreferredWidth(400);  
+		table.setModel(model);
+
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setBounds(0, 59, 745, 199);
+
+		panel.add(scrollPane);
+
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab("Administradores", null, panel_1, null);
+		panel_1.setLayout(null);
+
+		JTextField txtBuscar_1 = new JTextField();
+		txtBuscar_1.setColumns(10);
+		txtBuscar_1.setBounds(11, 10, 459, 28);
+		panel_1.add(txtBuscar_1);
+
+		JButton btnBuscar_1 = new JButton("Buscar");
+		btnBuscar_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnBuscar_1.setBounds(480, 10, 85, 28);
+		btnBuscar_1.addActionListener(e -> {
+			String texto = txtBuscar_1.getText().trim();
+			buscarEventos(texto);
+		});
+		panel_1.add(btnBuscar_1);
+
+		JScrollPane scrollPane_1 = new JScrollPane((Component) null);
+		scrollPane_1.setBounds(0, 59, 745, 199);
+		panel_1.add(scrollPane_1);
+
+		table_1 = new JTable();
+		scrollPane_1.setViewportView(table_1);
+		model_1 = new DefaultTableModel(new Object[][] {}, new String[] { "Fecha", "Título", "Capacidad", "Descripcion" }) {
+			Class[] columnTypes = new Class[] { String.class, String.class, Integer.class, String.class };
+
+			public Class<?> getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		};
+		table_1.getColumnModel().getColumn(0).setPreferredWidth(100);  
+		table_1.getColumnModel().getColumn(1).setPreferredWidth(200);  
+		table_1.getColumnModel().getColumn(2).setPreferredWidth(70); 
+		table_1.getColumnModel().getColumn(3).setPreferredWidth(400); 
+		table_1.setModel(model_1);
+
+		JLabel lblSeleccionado_1 = new JLabel("");
+		lblSeleccionado_1.setBounds(11, 268, 760, 20);
+		panel_1.add(lblSeleccionado_1);
+
+		JButton btnAgregar_1 = new JButton("Agregar");
+		btnAgregar_1.setBounds(10, 373, 150, 40);
+		btnAgregar_1.addActionListener(e -> {
+			JTextField nombreField = new JTextField();
+			JTextField apellidoField = new JTextField();
+			JTextField idField = new JTextField();
+			JPasswordField passField = new JPasswordField();
+
+			Object[] fields = { "Nombre:", nombreField, "Apellido:", apellidoField, "ID:", idField, "Contraseña:",
+					passField };
+
+			int option = JOptionPane.showConfirmDialog(null, fields, "Agregar Usuario", JOptionPane.OK_CANCEL_OPTION);
+
+			if (option == JOptionPane.OK_OPTION) {
+
+				Admin.agregarAdmin(nombreField.getText(), apellidoField.getText(), idField.getText(),
+						passField.getText());
+				cargarTablaAdmin();
+			}
+		});
+		panel_1.add(btnAgregar_1);
+
+		JButton btnEditar_1 = new JButton("Editar");
+		btnEditar_1.setBounds(170, 373, 150, 40);
+		btnEditar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (adminSeleccionado != null) {
+					EditarAdmin editar = new EditarAdmin(adminSeleccionado, admin);
+					editar.run(adminSeleccionado, admin);
+					dispose();
+				} else {
+					lblSeleccionado_1.setText("Seleccione un administrador");
+					;
+				}
+
+			}
+		});
+		panel_1.add(btnEditar_1);
+
+		JButton btnEliminar_1 = new JButton("Eliminar");
+		btnEliminar_1.setBounds(330, 373, 150, 40);
+		btnEliminar_1.addActionListener(e -> {
+
+			if (adminSeleccionado != null) {
+				int ans = JOptionPane.showOptionDialog(null, "¿Estás seguro de que querés eliminar este administrador?",
+						"Confirmar acción", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 1);
+
+				if (ans == 0) {
+					if (DLLAdmin.eliminarAdmin(adminSeleccionado)) {
+						JOptionPane.showMessageDialog(btnEliminar, "Administrador eliminado correctamente.");
+					} else {
+						JOptionPane.showMessageDialog(btnEliminar,
+								"Error al eliminar usuario, por favor vuelva a intentarlo más tarde.");
+					}
+				}
+			} else {
+				lblSeleccionado_1.setText("Seleccione un Administrador");
+				;
+			}
+
+			cargarTablaAdmin();
+
+		});
+		panel_1.add(btnEliminar_1);
+
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(10, 442, 85, 21);
+		btnVolver.addActionListener(e -> {
+			new AdminMenu(admin).run(admin);
+			dispose();
+		});
+		contentPane.add(btnVolver);
+
+		// Acción al seleccionar fila
+		table.getSelectionModel().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int row = table.getSelectedRow();
+				if (row != -1) {
+					aficionadoSeleccionado = new Aficionado((String) model.getValueAt(row, 1),
+							(String) model.getValueAt(row, 2), (String) model.getValueAt(row, 0),
+							(String) model.getValueAt(row, 4), (String) model.getValueAt(row, 3),
+							(String) model.getValueAt(row, 5)
+
+					);
+					lblSeleccionado.setText("Seleccionado: ID=" + aficionadoSeleccionado.getId() + ", Nombre= "
+							+ aficionadoSeleccionado.getNombre() + " " + aficionadoSeleccionado.getApellido()
+							+ ", Email= " + aficionadoSeleccionado.getEmail() + ", Fecha de Nacimiento= "
+							+ aficionadoSeleccionado.getdOfBirth());
+
+					txtBuscar = new JTextField();
+					txtBuscar.setBounds(10, 10, 460, 28);
+					panel.add(txtBuscar);
+					txtBuscar.setColumns(10);
+
+				}
+			}
+		});
+
+		table_1.getSelectionModel().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int row = table_1.getSelectedRow();
+				if (row != -1) {
+					adminSeleccionado = new Admin((String) model_1.getValueAt(row, 1),
+							(String) model_1.getValueAt(row, 2), (String) model_1.getValueAt(row, 0),
+							(String) model_1.getValueAt(row, 3));
+					lblSeleccionado_1.setText("Seleccionado: ID=" + adminSeleccionado.getId() + ", Nombre= "
+							+ adminSeleccionado.getNombre() + " " + adminSeleccionado.getApellido());
+
+				}
+			}
+		});
+
+		// Cargar datos
+		cargarTablaArticulos();
+		cargarTablaEventos();
+	}
+
+	private void cargarTablaArticulos() {
+
+		LinkedList<Articulo> articulos = DLLArticulo.mostrarArticulos().stream()
+				.sorted(Comparator.comparing(Articulo::getFecha, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		model.setRowCount(0);
+		for (Articulo a : articulos) {
+			model.addRow(new Object[] { a.getFecha(), a.getTitulo(), a.getDescripcion() });
+		}
+	}
+
+	private void cargarTablaEventos() {
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+	    
+	    LinkedList<Evento> eventos = DLLEvento.mostrarEventos().stream()
+	            .sorted(Comparator.comparing(Evento::getFechaYHora))
+	            .collect(Collectors.toCollection(LinkedList::new));
+
+	    model_1.setRowCount(0);
+	    for (Evento e : eventos) {
+	        String fechaFormateada = e.getFechaYHora().format(formatter);
+	        model_1.addRow(new Object[] { fechaFormateada, e.getTitulo(), e.getDescripcion() });
+	    }
+	}
+
+
+	private void buscarArticulos(String texto) {
+		LinkedList<Articulo> articulos = DLLArticulo.mostrarArticulos().stream()
+				.filter(a -> a.getTitulo().toLowerCase().contains(texto.toLowerCase())
+						|| a.getDescripcion().toLowerCase().contains(texto.toLowerCase()))
+				.sorted(Comparator.comparing(Articulo::getFecha, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		model.setRowCount(0);
+		for (Articulo a : articulos) {
+			model.addRow(new Object[] { a.getFecha(), a.getTitulo(), a.getDescripcion() });
+		}
+	}
+
+	private void buscarEventos(String texto) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+		
+		LinkedList<Evento> eventos = DLLEvento.mostrarEventos().stream()
+				.filter(a -> a.getTitulo().toLowerCase().contains(texto.toLowerCase()))
+				.sorted(Comparator.comparing(Evento::getTitulo, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		model_1.setRowCount(0);
+	    for (Evento e : eventos) {
+	        String fechaFormateada = e.getFechaYHora().format(formatter);
+	        model_1.addRow(new Object[] { fechaFormateada, e.getTitulo(), e.getDescripcion() });
+		}
+	}
+}

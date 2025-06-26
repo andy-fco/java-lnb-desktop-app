@@ -1,0 +1,66 @@
+package GUI;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JTabbedPane;
+import org.eclipse.wb.swing.FocusTraversalOnArray;
+import java.awt.Component;
+import javax.swing.JButton;
+
+public class GestionForo extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+
+			public void run() {
+				try {
+					GestionForo frame = new GestionForo();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+
+	/**
+	 * Create the frame.
+	 */
+	public GestionForo() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 477);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Foro");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 34));
+		lblNewLabel.setBounds(308, 24, 96, 43);
+		contentPane.add(lblNewLabel);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(10, 86, 697, 278);
+		contentPane.add(tabbedPane);
+		
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Artículos", null, panel, null);
+		
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab("Eventos", null, panel_1, null);
+		
+		JButton btnNewButton = new JButton("Volver");
+		btnNewButton.setBounds(10, 409, 85, 21);
+		contentPane.add(btnNewButton);
+		
+	}
+}

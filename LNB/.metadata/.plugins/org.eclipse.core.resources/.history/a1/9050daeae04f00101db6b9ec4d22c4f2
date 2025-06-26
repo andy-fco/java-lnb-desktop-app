@@ -1,0 +1,152 @@
+package repository;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import BLL.Aficionado;
+import DLL.DLLAficionado;
+
+public interface Juegos {
+	
+	default public void jugarAhorcado(Aficionado aficionado) {
+	    String[][] palabrasPorNivel = {
+	        { "burro", "bahia", "rollo", "laser", "exito", "grito", "altar", "lapiz", "enojo", "queja" }, // 5 letras
+	        { "segundo", "revista", "estudio", "quimica", "pendulo", "factura", "raqueta", "estuche", "tsunami", "monarca" }, // 7 letras
+	        { "pentagono", "volcanico", "distancia", "esperanza", "industria", "presencia", "programar", "zapatilla", "esqueleto", "detective" } // 9 letras
+	    };
+
+	    int[] longitudPorNivel = {5, 7, 9};
+	    int maxErrores = 5;
+	    int palabrasJugadas;
+	    String[] palabrasUsadas = new String[10];
+	    String[] opcionesNivel = {"Fácil (5 letras)", "Medio (7 letras)", "Difícil (9 letras)", "Salir"};
+
+	    ImageIcon portada = new ImageIcon(getClass().getResource("/img/portada.jpg"));
+	    JOptionPane.showMessageDialog(null,
+	            "Bienvenidx al AHORCADO\nEl juego es el que todos conocemos.\nYo voy a pensar una palabra y vos vas\na tener que adivinarla de a una letra a la vez.\nTené cuidado, si intentás 5 letras incorrectas perdés.\n¿Estás para arrancar?",
+	            "AHORCADO", JOptionPane.DEFAULT_OPTION, portada);
+
+	    while (true) {
+	        int nivel = JOptionPane.showOptionDialog(null,
+	                "Elegí el nivel de dificultad:",
+	                "NIVEL DE DIFICULTAD",
+	                JOptionPane.DEFAULT_OPTION,
+	                JOptionPane.QUESTION_MESSAGE,
+	                new ImageIcon(getClass().getResource("/img/brain.jpg")),
+	                opcionesNivel,
+	                opcionesNivel[0]);
+
+	        if (nivel == 3 || nivel == JOptionPane.CLOSED_OPTION) {
+	            // Salir
+	            break;
+	        }
+
+	        palabrasJugadas = 0;
+	        Arrays.fill(palabrasUsadas, null);
+
+	        while (palabrasJugadas < 10) {
+	            String palabra;
+	            do {
+	                palabra = palabrasPorNivel[nivel][(int) (Math.random() * 10)];
+	            } while (Arrays.asList(palabrasUsadas).contains(palabra));
+	            palabrasUsadas[palabrasJugadas] = palabra;
+	            palabrasJugadas++;
+
+	            int longitud = longitudPorNivel[nivel];
+	            char[] cguesses = new char[longitud];
+	            Arrays.fill(cguesses, '_');
+
+	            List<Character> letrasIncorrectas = new ArrayList<>();
+	            int aciertos = 0, errores = 0;
+
+	            while (aciertos < longitud && errores < maxErrores) {
+	                String estadoPalabra = new String(cguesses).replaceAll("", " ").trim();
+	                String estadoErrores = letrasIncorrectas.stream()
+	                        .map(String::valueOf)
+	                        .collect(Collectors.joining(" "));
+
+	                String input = JOptionPane.showInputDialog(null,
+	                        "Palabra: " + estadoPalabra + "\nLetras incorrectas: " + estadoErrores + "\nElegí una letra:",
+	                        "AHORCADO", JOptionPane.QUESTION_MESSAGE);
+
+	                if (input == null || input.isEmpty()) {
+	                    JOptionPane.showMessageDialog(null, "Debes ingresar una letra.");
+	                    continue;
+	                }
+	                char letra = Character.toLowerCase(input.charAt(0));
+	                if (!Character.isLetter(letra)) {
+	                    JOptionPane.showMessageDialog(null, "Por favor, ingresa solo letras.");
+	                    continue;
+	                }
+	                if (new String(cguesses).indexOf(letra) >= 0 || letrasIncorrectas.contains(letra)) {
+	                    JOptionPane.showMessageDialog(null, "Ya intentaste con esa letra, elegí otra.");
+	                    continue;
+	                }
+
+	                boolean acerto = false;
+	                for (int i = 0; i < longitud; i++) {
+	                    if (palabra.charAt(i) == letra) {
+	                        cguesses[i] = letra;
+	                        acerto = true;
+	                        aciertos++;
+	                    }
+	                }
+
+	                if (!acerto) {
+	                    letrasIncorrectas.add(letra);
+	                    errores++;
+	                }
+
+	                ImageIcon imagen = new ImageIcon(getClass().getResource("/img/ahorcado-" + errores + ".jpg"));
+	                JOptionPane.showMessageDialog(null,
+	                        "Palabra: " + new String(cguesses).replaceAll("", " ").trim() + "\nLetras incorrectas: " + estadoErrores,
+	                        "AHORCADO", JOptionPane.DEFAULT_OPTION, imagen);
+	            }
+
+	            ImageIcon img;
+	            String mensaje;
+	            if (aciertos == longitud) {
+	                img = new ImageIcon(getClass().getResource("/img/win" + (int)(Math.random()*5) + ".jpg"));
+	                mensaje = "¡¡Felicitaciones!! Adivinaste la palabra: " + palabra + "\n¡Sumás "+longitud+" puntos!";
+	                try {
+	                    DLLAficionado.sumarPuntos(aficionado, longitud);
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                    JOptionPane.showMessageDialog(null, "Lo sentimos, hubo un error al sumar los puntos.", "Aviso", JOptionPane.WARNING_MESSAGE);
+	                }
+	            } else {
+	                img = new ImageIcon(getClass().getResource("/img/loss" + (int)(Math.random()*5) + ".jpg"));
+	                mensaje = "Perdiste :(\nLa palabra era: " + palabra;
+	            }
+
+	            JOptionPane.showMessageDialog(null, mensaje, "AHORCADO", JOptionPane.DEFAULT_OPTION, img);
+
+	            String[] opcionesMenu = {"Volver a jugar", "Volver al menú", "Salir"};
+	            int opcionMenu = JOptionPane.showOptionDialog(null,
+	                    "¿Qué querés hacer ahora?",
+	                    "MENÚ",
+	                    JOptionPane.DEFAULT_OPTION,
+	                    JOptionPane.QUESTION_MESSAGE,
+	                    null,
+	                    opcionesMenu,
+	                    opcionesMenu[0]);
+
+	            if (opcionMenu == 1) {
+	                // Volver al menú de niveles
+	                break;
+	            } else if (opcionMenu == 2 || opcionMenu == JOptionPane.CLOSED_OPTION) {
+	                // Salir
+	                return;
+	            }
+	            // Si opcionMenu == 0, sigue jugando en el mismo nivel
+	        }
+	    }
+	}
+
+
+}

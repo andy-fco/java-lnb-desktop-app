@@ -1,0 +1,263 @@
+package GUI;
+
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import BLL.Admin;
+import BLL.Equipo;
+import BLL.Jugador;
+import DLL.DLLAficionado;
+import DLL.DLLEquipo;
+import DLL.DLLJugador;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+
+public class GestionJugadores extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private DefaultTableModel model;
+	private Jugador jugadorSeleccionado;
+
+	/**
+	 * Launch the application.
+	 */
+
+	public void run(Admin admin) {
+		try {
+			GestionJugadores frame = new GestionJugadores(admin);
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public GestionJugadores(Admin admin) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 822, 560);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JTextField textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(10, 60, 521, 28);
+		contentPane.add(textField);
+
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnBuscar.addActionListener(e -> {
+			buscarJugador(textField.getText());
+		});
+		btnBuscar.setBounds(541, 60, 85, 28);
+		contentPane.add(btnBuscar);
+
+		JScrollPane scrollPane = new JScrollPane((Component) null);
+		scrollPane.setBounds(10, 109, 796, 249);
+		contentPane.add(scrollPane);
+
+		JTable table = new JTable();
+		scrollPane.setViewportView(table);
+
+		JLabel lblSeleccionado = new JLabel();
+		lblSeleccionado.setBounds(10, 373, 760, 20);
+		contentPane.add(lblSeleccionado);
+
+		model = new DefaultTableModel(new Object[][] {},
+				new String[] { "Nombre", "Apellido", "Nacionalidad", "Camiseta", "Posicion", "Equipo", "Media" }) {
+			Class[] columnTypes = new Class[] { String.class, String.class, String.class, Integer.class, String.class,
+					String.class, Integer.class };
+
+			public Class<?> getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		};
+
+		table.setModel(model);
+
+		table.getColumnModel().getColumn(0).setPreferredWidth(70);
+		table.getColumnModel().getColumn(1).setPreferredWidth(70);
+		table.getColumnModel().getColumn(2).setPreferredWidth(80);
+		table.getColumnModel().getColumn(3).setPreferredWidth(40);
+		table.getColumnModel().getColumn(4).setPreferredWidth(60);
+		table.getColumnModel().getColumn(5).setPreferredWidth(80);
+		table.getColumnModel().getColumn(6).setPreferredWidth(30);
+
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(10, 10, 85, 21);
+		btnVolver.addActionListener(e -> {
+			new AdminMenu(admin).run(admin);
+			dispose();
+		});
+		contentPane.add(btnVolver);
+
+		// Acción al seleccionar fila
+		table.getSelectionModel().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int row = table.getSelectedRow();
+				if (row != -1) {
+					Equipo equipo = DLLEquipo.buscarEquipoPorId(DLLEquipo.buscarID((String) model.getValueAt(row, 5)));
+					jugadorSeleccionado = new Jugador((String) model.getValueAt(row, 0),
+							(String) model.getValueAt(row, 1), (String) model.getValueAt(row, 2),
+							(Integer) model.getValueAt(row, 3), (String) model.getValueAt(row, 4), equipo,
+							(Integer) model.getValueAt(row, 6)
+
+					);
+					lblSeleccionado.setText("Seleccionado: " + jugadorSeleccionado.getNombre() + " "
+							+ jugadorSeleccionado.getApellido() + " | " + jugadorSeleccionado.getEquipo().getNombre());
+
+				}
+			}
+		});
+
+		JButton btnAgregar = new JButton("Agregar");
+		btnAgregar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnAgregar.setBounds(313, 473, 150, 40);
+		btnAgregar.addActionListener(e -> {
+
+		});
+		contentPane.add(btnAgregar);
+
+		JButton btnEditar = new JButton("Editar");
+		btnEditar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnEditar.setBounds(475, 473, 150, 40);
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (jugadorSeleccionado != null) {
+					/*
+					 * EditarAficionado editar = new EditarAficionado(aficionadoSeleccionado,
+					 * admin); editar.run(aficionadoSeleccionado, admin); dispose();
+					 */
+				} else {
+					lblSeleccionado.setText("Seleccione un jugador");
+					;
+				}
+
+			}
+		});
+		contentPane.add(btnEditar);
+
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnEliminar.setBounds(635, 473, 150, 40);
+		btnEliminar.addActionListener(e -> {
+
+			if (jugadorSeleccionado != null) {
+				int ans = JOptionPane.showOptionDialog(null, "¿Estás seguro de que querés eliminar este jugador?",
+						"Confirmar acción", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 1);
+
+				if (ans == 0) {
+					int id = DLLJugador.buscarID(jugadorSeleccionado);
+					if (DLLJugador.eliminarJugador(id)) {
+						JOptionPane.showMessageDialog(btnEliminar, "Jugador eliminado correctamente.");
+					} else {
+						JOptionPane.showMessageDialog(btnEliminar,
+								"Error al eliminar jugador, por favor vuelva a intentarlo más tarde.");
+					}
+				}
+			} else {
+				lblSeleccionado.setText("Seleccione un Jugador");
+				;
+			}
+
+			cargarTabla();
+
+		});
+		contentPane.add(btnEliminar);
+
+		JLabel lblNewLabel = new JLabel("Posición");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel.setBounds(10, 407, 76, 30);
+		contentPane.add(lblNewLabel);
+
+		JComboBox<String> comboBoxPosicion = new JComboBox<>();
+		comboBoxPosicion.setModel(
+				new DefaultComboBoxModel(new String[] { "", "Base", "Escolta", "Alero", "Ala-Pivot", "Pivot" }));
+		comboBoxPosicion.setBounds(83, 409, 156, 28);
+		contentPane.add(comboBoxPosicion);
+
+		JButton btnFiltrar = new JButton("Filtrar");
+		btnFiltrar.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnFiltrar.addActionListener(e -> {
+
+			String posicion = (String) comboBoxPosicion.getSelectedItem();
+
+			if (!posicion.isEmpty()) {
+				buscarPorPosicion(posicion);
+			} 
+
+		});
+		btnFiltrar.setBounds(114, 479, 125, 30);
+		contentPane.add(btnFiltrar);
+
+		/*
+		 * JComboBox comboBoxEquipo = new JComboBox(); comboBoxEquipo.setBounds(83, 441,
+		 * 156, 28); contentPane.add(comboBoxEquipo);
+		 * 
+		 * JLabel lblEquipo = new JLabel("Equipo"); lblEquipo.setFont(new Font("Tahoma",
+		 * Font.PLAIN, 18)); lblEquipo.setBounds(10, 439, 76, 30);
+		 * contentPane.add(lblEquipo);
+		 */
+
+		cargarTabla();
+
+	}
+
+	public void cargarTabla() {
+		LinkedList<Jugador> jugadores = DLLJugador.mostrarJugadores();
+		jugadores.sort(Comparator.comparing(Jugador::getMedia).reversed());
+
+		model.setRowCount(0);
+		for (Jugador j : jugadores) {
+			model.addRow(new Object[] { j.getNombre(), j.getApellido(), j.getNacionalidad(), j.getCamiseta(),
+					j.getPosicion(), j.getEquipo().getNombre(), j.getMedia() });
+		}
+	}
+
+	public void buscarJugador(String texto) {
+		LinkedList<Jugador> listados = DLLJugador.mostrarJugadores().stream()
+				.filter(j -> j.getNombre().toLowerCase().contains(texto.toLowerCase())
+						|| j.getApellido().toLowerCase().contains(texto.toLowerCase()))
+				.sorted(Comparator.comparing(Jugador::getNombre, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		model.setRowCount(0);
+		for (Jugador j : listados) {
+			model.addRow(new Object[] { j.getNombre(), j.getApellido(), j.getNacionalidad(), j.getCamiseta(),
+					j.getPosicion(), j.getEquipo().getNombre(), j.getMedia() });
+		}
+	}
+
+	public void buscarPorPosicion(String texto) {
+		LinkedList<Jugador> jugadores = DLLJugador.mostrarJugadoresPorPosicion(texto);
+		jugadores.sort(Comparator.comparing(Jugador::getMedia).reversed());
+
+		model.setRowCount(0);
+		for (Jugador j : jugadores) {
+			model.addRow(new Object[] { j.getNombre(), j.getApellido(), j.getNacionalidad(), j.getCamiseta(),
+					j.getPosicion(), j.getEquipo().getNombre(), j.getMedia() });
+	}
+}}

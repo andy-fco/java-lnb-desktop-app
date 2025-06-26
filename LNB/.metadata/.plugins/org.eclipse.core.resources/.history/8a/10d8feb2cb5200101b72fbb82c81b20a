@@ -1,0 +1,64 @@
+package GUI;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Aficionado;
+import BLL.Articulo;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.Font;
+
+public class VerArticulo extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+
+			public void run(Aficionado user, Articulo art) {
+				try {
+					VerArticulo frame = new VerArticulo(user, art);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+ 
+	/**
+	 * Create the frame.
+	 */
+	public VerArticulo(Aficionado user, Articulo art) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 477);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(10, 10, 85, 21);
+		contentPane.add(btnVolver);
+		
+		JLabel lblTitulo = new JLabel("<html><h1>"+art.getTitulo()+"</h1></html>");
+		lblTitulo.setBounds(10, 48, 561, 79);
+		contentPane.add(lblTitulo);
+		
+		JLabel lblFecha = new JLabel(art.getFecha());
+		lblFecha.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFecha.setBounds(614, 33, 93, 21);
+		contentPane.add(lblFecha);
+		
+		JLabel lblDescripcion = new JLabel("<html><p>"+art.getDescripcion()+"</p></html>");
+		lblDescripcion.setBounds(10, 150, 697, 280);
+		contentPane.add(lblDescripcion);
+	}
+
+}

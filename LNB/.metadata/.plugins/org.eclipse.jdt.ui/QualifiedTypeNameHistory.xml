@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="DLL.DLLAdmin"/>
+    <fullyQualifiedTypeName name="java.time.LocalDate"/>
+    <fullyQualifiedTypeName name="java.sql.Date"/>
+    <fullyQualifiedTypeName name="BLL.Aficionado"/>
+    <fullyQualifiedTypeName name="GUI.MenuDeJuegos"/>
+    <fullyQualifiedTypeName name="GUI.MainMenu"/>
+    <fullyQualifiedTypeName name="javax.swing.SpinnerNumberModel"/>
+    <fullyQualifiedTypeName name="BLL.Jugador"/>
+    <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="DLL.DLLAficionado"/>
+    <fullyQualifiedTypeName name="DLL.DLLEquipo"/>
+    <fullyQualifiedTypeName name="DLL.DLLJugador"/>
     <fullyQualifiedTypeName name="javax.swing.JOptionPane"/>
+    <fullyQualifiedTypeName name="GUI.GestionJugadores"/>
 </qualifiedTypeNameHistroy>

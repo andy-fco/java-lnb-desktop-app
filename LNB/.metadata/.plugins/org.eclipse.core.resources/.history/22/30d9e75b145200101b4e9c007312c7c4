@@ -1,0 +1,253 @@
+package GUI;
+
+
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Aficionado;
+import BLL.Equipo;
+import DLL.DLLEquipo;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+
+import javax.swing.JButton;
+
+public class Equipos extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	 
+			public void run(Aficionado user) {
+				try {
+					Equipos frame = new Equipos(user);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+ 
+	/**
+	 * Create the frame.
+	 */
+	public Equipos(Aficionado user) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 477);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		
+		
+		JLabel lblEquipos = new JLabel("Equipos");
+		lblEquipos.setFont(new Font("Tahoma", Font.PLAIN, 36));
+		lblEquipos.setBounds(293, 20, 131, 53);
+		contentPane.add(lblEquipos);
+		
+		JButton btnArgentino = new JButton("Argentino");
+		btnArgentino.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnArgentino.setBounds(30, 112, 141, 38);
+		contentPane.add(btnArgentino);
+		
+		JButton btnAtenas = new JButton("Atenas");
+		btnAtenas.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnAtenas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Atenas");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnAtenas.setBounds(30, 171, 141, 38);
+		contentPane.add(btnAtenas);
+		
+		JButton btnBoca = new JButton("Boca");
+		btnBoca.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnBoca.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Boca Juniors");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnBoca.setBounds(30, 238, 141, 38);
+		contentPane.add(btnBoca);
+		
+		JButton btnFerro = new JButton("Ferro");
+		btnFerro.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnFerro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Ferro Carril Oeste");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnFerro.setBounds(30, 303, 141, 38);
+		contentPane.add(btnFerro);
+		
+		JButton btnGimnasia = new JButton("Gimnasia");
+		btnGimnasia.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnGimnasia.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Gimnasia y Esgrima");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnGimnasia.setBounds(30, 363, 141, 38);
+		contentPane.add(btnGimnasia);
+		
+		JButton btnIndependiente = new JButton("Independiente");
+		btnIndependiente.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnIndependiente.setBounds(201, 112, 141, 38);
+		contentPane.add(btnIndependiente);
+		
+		JButton btnOlmpico = new JButton("Olímpico");
+		btnOlmpico.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnOlmpico.setBounds(372, 112, 141, 38);
+		contentPane.add(btnOlmpico);
+		
+		JButton btnRiachuelo = new JButton("Riachuelo");
+		btnRiachuelo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnRiachuelo.setBounds(543, 112, 141, 38);
+		contentPane.add(btnRiachuelo);
+		
+		JButton btnInstituto = new JButton("Instituto");
+		btnInstituto.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnInstituto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Instituto");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnInstituto.setBounds(201, 171, 141, 38);
+		contentPane.add(btnInstituto);
+		
+		JButton btnLaUnin = new JButton("La Unión");
+		btnLaUnin.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnLaUnin.setBounds(201, 238, 141, 38);
+		contentPane.add(btnLaUnin);
+		
+		JButton btnOber = new JButton("Oberá");
+		btnOber.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnOber.setBounds(201, 303, 141, 38);
+		contentPane.add(btnOber);
+		
+		JButton btnObras = new JButton("Obras");
+		btnObras.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnObras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Obras Basket");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnObras.setBounds(201, 363, 141, 38);
+		contentPane.add(btnObras);
+		
+		JButton btnPearol = new JButton("Peñarol");
+		btnPearol.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnPearol.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Peñarol");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnPearol.setBounds(372, 171, 141, 38);
+		contentPane.add(btnPearol);
+		
+		JButton btnPlatense = new JButton("Platense");
+		btnPlatense.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnPlatense.setBounds(372, 238, 141, 38);
+		contentPane.add(btnPlatense);
+		
+		JButton btnQuimsa = new JButton("Quimsa");
+		btnQuimsa.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnQuimsa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Quimsa");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnQuimsa.setBounds(372, 303, 141, 38);
+		contentPane.add(btnQuimsa);
+		
+		JButton btnRegatas = new JButton("Regatas");
+		btnRegatas.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnRegatas.setBounds(372, 363, 141, 38);
+		contentPane.add(btnRegatas);
+		
+		JButton btnSanLorenzo = new JButton("San Lorenzo");
+		btnSanLorenzo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnSanLorenzo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("San Lorenzo");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnSanLorenzo.setBounds(543, 171, 141, 38);
+		contentPane.add(btnSanLorenzo);
+		
+		JButton btnSanMartn = new JButton("San Martín");
+		btnSanMartn.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnSanMartn.setBounds(543, 238, 141, 38);
+		contentPane.add(btnSanMartn);
+		
+		JButton btnUnin = new JButton("Unión");
+		btnUnin.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnUnin.setBounds(543, 303, 141, 38);
+		contentPane.add(btnUnin);
+		
+		JButton btnZrate = new JButton("Zárate");
+		btnZrate.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnZrate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Equipo equipo = DLLEquipo.buscarEquipoPorNombre("Zárate Basket");
+				VerEquipo frame = new VerEquipo(user,equipo);
+				frame.run(user, equipo);
+				dispose();
+			}
+		});
+		btnZrate.setBounds(543, 363, 141, 38);
+		contentPane.add(btnZrate);
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(10, 10, 85, 21);
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainMenu frame = new MainMenu(user);
+				frame.run(user);
+				dispose();
+			}
+		});
+		contentPane.add(btnVolver);
+		
+		
+	}
+
+}

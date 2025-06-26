@@ -1,0 +1,135 @@
+package GUI;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Aficionado;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
+public class EditarAficionado extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField inpNombre;
+	private JTextField inpApellido;
+	private JTextField inpID;
+	private JTextField inpPass;
+	private JTextField inpMail;
+	private JTextField inpDOB;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
+
+	/**
+	 * Launch the application.
+	 */
+	
+			public void run(Aficionado aficionado) {
+				try {
+					EditarAficionado frame = new EditarAficionado(aficionado);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		
+	
+
+	/**
+	 * Create the frame.
+	 */
+	public EditarAficionado(Aficionado aficionado) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 405, 526);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Editar Aficionado");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 32));
+		lblNewLabel.setBounds(74, 30, 243, 39);
+		contentPane.add(lblNewLabel);
+		
+		inpNombre = new JTextField();
+		inpNombre.setBounds(47, 103, 306, 24);
+		inpNombre.setText(aficionado.getNombre());
+		contentPane.add(inpNombre);
+		inpNombre.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Nombre: ");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblNewLabel_1.setBounds(47, 79, 134, 24);
+		contentPane.add(lblNewLabel_1);
+		
+		inpApellido = new JTextField();
+		inpApellido.setColumns(10);
+		inpApellido.setBounds(47, 155, 306, 24);
+		inpApellido.setText(aficionado.getApellido());
+		contentPane.add(inpApellido);
+		
+		JLabel lblApellido = new JLabel("Apellido:");
+		lblApellido.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblApellido.setBounds(47, 131, 134, 24);
+		contentPane.add(lblApellido);
+		
+		inpID = new JTextField();
+		inpID.setColumns(10);
+		inpID.setBounds(47, 210, 306, 24);
+		inpID.setText(aficionado.getId());
+		contentPane.add(inpID);
+		
+		JLabel lblID = new JLabel("ID: ");
+		lblID.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblID.setBounds(47, 186, 134, 24);
+		contentPane.add(lblID);
+		
+		inpPass = new JTextField();
+		inpPass.setColumns(10);
+		inpPass.setBounds(47, 264, 306, 24);
+		inpPass.setText(aficionado.getPass());
+		contentPane.add(inpPass);
+		
+		JLabel lblPass = new JLabel("Contraseña:");
+		lblPass.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblPass.setBounds(47, 240, 134, 24);
+		contentPane.add(lblPass);
+		
+		inpMail = new JTextField();
+		inpMail.setColumns(10);
+		inpMail.setBounds(47, 318, 306, 24);
+		inpMail.setText(aficionado.getEmail());
+		contentPane.add(inpMail);
+		
+		JLabel lblMail = new JLabel("Email:");
+		lblMail.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblMail.setBounds(47, 294, 134, 24);
+		contentPane.add(lblMail);
+		
+		inpDOB = new JTextField();
+		inpDOB.setColumns(10);
+		inpDOB.setBounds(47, 371, 306, 24);
+		inpDOB.setText(aficionado.getdOfBirth());
+		contentPane.add(inpDOB);
+		
+		JLabel lblDOB = new JLabel("Fecha de Nacimiento [YYYY-MM-DD]");
+		lblDOB.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblDOB.setBounds(47, 347, 285, 24);
+		contentPane.add(lblDOB);
+		
+		btnNewButton = new JButton("Editar");
+		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnNewButton.setBounds(195, 405, 158, 32);
+		contentPane.add(btnNewButton);
+		
+		btnNewButton_1 = new JButton("Volver");
+		btnNewButton_1.setBounds(10, 458, 85, 21);
+		contentPane.add(btnNewButton_1);
+	}
+}

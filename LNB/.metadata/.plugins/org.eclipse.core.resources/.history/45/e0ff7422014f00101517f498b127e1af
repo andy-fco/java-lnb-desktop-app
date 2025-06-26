@@ -1,0 +1,270 @@
+package DLL;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.LinkedList;
+
+import javax.swing.JOptionPane;
+
+import BLL.Aficionado;
+import BLL.Equipo;
+import BLL.Jugador;
+
+public class DLLAficionado {
+
+	private static Connection con = Conexion.getInstance().getConnection();
+
+	// INGRESO
+	public static Aficionado login(String id, String pass) {
+		Aficionado user = new Aficionado();
+
+		try {
+			PreparedStatement stmt = con
+					.prepareStatement("SELECT * FROM aficionados WHERE id_usuario = ? AND pass = ?");
+			stmt.setString(1, id);
+			stmt.setString(2, user.encriptar(pass));
+
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				String nombre = rs.getString("nombre");
+				String apellido = rs.getString("apellido");
+				String email = rs.getString("email");
+				Date date = rs.getDate("d_of_birth");
+				String dOfBirth = new SimpleDateFormat("dd-MM-yyyy").format(date);
+//					Jugador jugadorFavorito
+//					Equipo equipoFavorito
+//					int puntos
+
+				user = new Aficionado(nombre, apellido, id, pass, email, dOfBirth);
+			}
+		} catch (Exception e) {
+			System.out.print("Error");
+		}
+
+		return user;
+	}
+
+	// LISTAR AFICIONADOS
+	public static LinkedList<Aficionado> mostrarAficionados() {
+		LinkedList<Aficionado> aficionados = new LinkedList<>();
+		try {
+			PreparedStatement stmt = con.prepareStatement("SELECT * FROM aficionados");
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+
+				String nombre = rs.getString("nombre");
+				String apellido = rs.getString("apellido");
+				String id = rs.getString("id_usuario");
+				String pass = rs.getString("pass");
+				String email = rs.getString("email");
+				String dOfBirth = rs.getString("d_of_birth");
+
+				aficionados.add(new Aficionado(nombre, apellido, id, pass, email, dOfBirth));
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return aficionados;
+	}
+
+	// REGISTRAR AFICIONADO
+	public static Aficionado registro(String nombre, String apellido, String id, String pass, String email,
+			String dOfBirth) {
+
+		Aficionado nuevo = new Aficionado(nombre, apellido, id, pass, email, dOfBirth);
+
+		LinkedList<Aficionado> existentes = mostrarAficionados();
+		boolean esUnico = true;
+
+		for (Aficionado existente : existentes) {
+			if (existente.getEmail().equals(nuevo.getEmail()) || existente.getId().equals(nuevo.getId())) {
+				esUnico = false;
+				break;
+			}
+		}
+
+		if (esUnico) {
+			if (!DLLAdmin.agregarAficionado(nuevo)) {
+				nuevo = null;
+				JOptionPane.showMessageDialog(null, "Error al registrar el usuario");
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Usuario ya existente (ID o email duplicado)");
+			nuevo = null;
+		}
+
+		return nuevo;
+	}
+
+	// EDITAR AFICIONADO
+	public static boolean editarAficionado(Aficionado aficionado, String id_viejo) {
+		boolean flag = false;
+		try {
+			PreparedStatement statement = con.prepareStatement(
+					"UPDATE aficionados SET nombre = ?, apellido = ?, id_usuario = ?, pass = ?, email = ?, d_of_birth = ? WHERE id_usuario = ?");
+			statement.setString(1, aficionado.getNombre());
+			statement.setString(2, aficionado.getApellido());
+			statement.setString(3, aficionado.getId());
+			statement.setString(4, aficionado.encriptar(aficionado.getPass()));
+			statement.setString(5, aficionado.getEmail());
+			statement.setDate(6, Date.valueOf(aficionado.getdOfBirth()));
+			statement.setString(7, id_viejo);
+
+			int filas = statement.executeUpdate();
+			if (filas > 0) {
+				flag = true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return flag;
+
+	}
+
+	// BORRAR AFICIONADO
+	public static boolean eliminarAficionado(Aficionado aficionado) {
+		boolean flag = false;
+		String id = aficionado.getId();
+
+		try {
+			PreparedStatement statement = con.prepareStatement("DELETE FROM aficionados WHERE id_usuario = ?");
+			statement.setString(1, id);
+
+			int filas = statement.executeUpdate();
+			if (filas > 0) {
+				flag = true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return flag;
+	}
+	
+	//BUSCAR ID (PK) DE AFICIONADO
+	public static int buscarIdAficionado(Aficionado aficionado) {
+	    int id = -1;
+
+	    try (
+	        PreparedStatement stmt = con.prepareStatement("SELECT id FROM aficionados WHERE id_usuario = ?")
+	    ) {
+	        stmt.setString(1, aficionado.getId());
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                id = rs.getInt("id");
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return id;
+	}
+
+
+	
+	
+	//AGREGAR QUINTETO IDEAL
+	public static boolean elegirQuinteto(LinkedList<Jugador> quinteto, Aficionado aficionado) {
+		
+		if (quinteto.size() != 5) {
+	        System.out.println("El quinteto debe contener exactamente 5 jugadores.");
+	        return false;
+	    }
+		
+		boolean flag = false;
+		int contador = 0;
+		int id_a = DLLAficionado.buscarIdAficionado(aficionado);
+		for (Jugador jugador : quinteto) {
+			try {
+				PreparedStatement statement = con.prepareStatement("INSERT INTO aficionado_jugador (id_aficionado, id_jugador) VALUES(?, ?)");
+				statement.setInt(1, id_a);
+				statement.setInt(2, DLLJugador.buscarID(jugador));
+
+				int filas = statement.executeUpdate();
+				if (filas > 0) {
+					contador++;
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			}
+		}
+		
+		if (contador == 5) {
+			flag = true;
+		}
+		
+		return flag;
+	}
+	
+	//MOSTRAR JUGADORES EN MI QUINTETO
+	public static LinkedList<Jugador> mostrarQuinteto(Aficionado aficionado) {
+	    LinkedList<Jugador> quinteto = new LinkedList<>();
+	    int idAficionado = DLLAficionado.buscarIdAficionado(aficionado);
+
+	    if (idAficionado == -1) {
+	        System.out.println("Aficionado no encontrado.");
+	        return quinteto;
+	    }
+
+	    try (
+	        PreparedStatement stmt = con.prepareStatement(
+	            "SELECT j.* FROM jugadores j " +
+	            "JOIN aficionado_jugador aj ON j.id = aj.id_jugador " +
+	            "WHERE aj.id_aficionado = ?"
+	        )
+	    ) {
+	        stmt.setInt(1, idAficionado);
+
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                String nombre = rs.getString("nombre");
+	                String apellido = rs.getString("apellido");
+	                int media = rs.getInt("media");
+	                String posicion = rs.getString("posicion");
+	                String nacionalidad = rs.getString("nacionalidad");
+	                int equipo_id = rs.getInt("equipo");
+	                int tiro = rs.getInt("tiro");
+	                int dribling = rs.getInt("dribling");
+	                int velocidad = rs.getInt("velocidad");
+	                int pase = rs.getInt("pase");
+	                int defensa = rs.getInt("defensa");
+	                int salto = rs.getInt("salto");
+	                String d_of_birth = rs.getString("d_of_birth");  
+	                String ciudad = rs.getString("ciudad");
+	                float altura = rs.getFloat("altura");
+	                String mano = rs.getString("mano_habil");
+	                String especialidad = rs.getString("especialidad");
+	                String jugada = rs.getString("jugada");
+	                int camiseta = rs.getInt("camiseta");
+
+	                Equipo equipo = DLLEquipo.buscarEquipoPorId(equipo_id);
+
+	                Jugador jugador = new Jugador(nombre, apellido, camiseta, media, posicion, nacionalidad, equipo, 
+	                    tiro, dribling, velocidad, pase, defensa, salto, 
+	                    d_of_birth, ciudad, altura, mano, especialidad, jugada);
+
+	                quinteto.add(jugador);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return quinteto;
+	}
+
+	
+
+}

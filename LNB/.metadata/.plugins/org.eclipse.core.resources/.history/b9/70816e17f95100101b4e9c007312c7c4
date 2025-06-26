@@ -1,0 +1,257 @@
+package DLL;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+ 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+ 
+import BLL.DT;
+import BLL.Equipo;
+import BLL.Jugador;
+
+public class DLLEquipo {
+	private static Connection con = Conexion.getInstance().getConnection();
+
+	// CREAR EQUIPO
+	public static boolean crearEquipo(Equipo equipo) {
+		boolean flag = false;
+
+		try {
+			PreparedStatement stmt = con.prepareStatement(
+					"INSERT INTO equipos (nombre, ciudad, estadio, fecha_de_fundacion, temporadas_en_liga, campeonatos) VALUES (?, ?, ?, ?, ?, ?)");
+			stmt.setString(1, equipo.getNombre());
+			stmt.setString(2, equipo.getCiudad());
+			stmt.setString(3, equipo.getEstadio());
+			stmt.setString(4, equipo.getFechaDeFundacion());
+			stmt.setInt(5, equipo.getTemporadasEnLiga());
+			stmt.setInt(6, equipo.getCampeonatos());
+
+			int filas = stmt.executeUpdate();
+			if (filas > 0) {
+				System.out.print("Equipo cargado correctamente.");
+				flag = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return flag;
+	}
+
+	// LISTAR EQUIPOS
+	public static LinkedList<Equipo> mostrarEquipos() {
+	    LinkedList<Equipo> equipos = new LinkedList<>();
+
+	    try {
+	        PreparedStatement stmt = con.prepareStatement("SELECT * FROM equipos");
+	        ResultSet rs = stmt.executeQuery();
+
+	        while (rs.next()) {
+	           
+	            
+	            String nombre = rs.getString("nombre");
+	            String ciudad = rs.getString("ciudad");
+	            String estadio = rs.getString("estadio");  
+	            String fecha = rs.getString("fecha_de_fundacion");
+	            int temporadas = rs.getInt("temporadas_en_liga");
+	            int campeonatos = rs.getInt("campeonatos"); 
+	            
+	            Equipo equipo = new Equipo(nombre,ciudad,estadio,fecha,temporadas,campeonatos);
+	            
+	            cargarDT(equipo);
+	            cargarJugadores(equipo);
+
+	            equipos.add(equipo);
+	        }
+
+	        rs.close();
+	        stmt.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return equipos;
+	}
+	// EDITAR EQUIPO
+
+	
+	
+	
+	// ELIMINAR EQUIPO
+	public static boolean eliminarEquipo(Equipo equipo) {
+	    boolean flag = false;
+
+	    try {
+	        PreparedStatement stmt = con.prepareStatement("DELETE FROM equipos WHERE nombre = ?");
+	        stmt.setString(1, equipo.getNombre());
+
+	        int filas = stmt.executeUpdate();
+	        if (filas > 0) {
+	            System.out.println("Equipo eliminado correctamente.");
+	            flag = true;
+	        }
+
+	        stmt.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return flag;
+	}
+	
+	// CARGAR DT
+	public static void cargarDT(Equipo equipo) {
+		try {
+			PreparedStatement stmt = con.prepareStatement(
+				    "SELECT d.* FROM dts d JOIN equipos e ON d.equipo = e.id WHERE e.nombre = ?"
+				);
+				stmt.setString(1, equipo.getNombre());
+				ResultSet rs = stmt.executeQuery();
+				
+				if (rs.next()) {
+					String nombre = rs.getString("nombre");
+		            String apellido = rs.getString("apellido");
+		            String d_of_birth = rs.getString("d_of_birth");  
+		            String nacionalidad = rs.getString("nacionalidad");
+		            String ciudad = rs.getString("ciudad");
+		            int temporadas = rs.getInt("temporadas_en_liga");
+		            
+		            equipo.setDt(new DT(nombre, apellido, d_of_birth, nacionalidad, ciudad, equipo, temporadas));
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//CARGAR JUGADORES
+	public static void cargarJugadores(Equipo equipo) {
+		ArrayList<Jugador> jugadores = new ArrayList<>();
+		try {
+			PreparedStatement stmt = con.prepareStatement(
+				    "SELECT j.* FROM jugadores j JOIN equipos e ON j.equipo = e.id WHERE e.nombre = ?"
+				);
+				stmt.setString(1, equipo.getNombre());
+				ResultSet rs = stmt.executeQuery();
+				
+				while(rs.next()) {
+					String nombre = rs.getString("nombre");
+		            String apellido = rs.getString("apellido");
+		            int camiseta = rs.getInt("camiseta");
+		            int media = rs.getInt("media");
+		            String posicion = rs.getString("posicion");
+		            String nacionalidad = rs.getString("nacionalidad");
+		            int tiro = rs.getInt("tiro");
+		            int dribling = rs.getInt("dribling");
+		            int velocidad = rs.getInt("velocidad");
+		            int pase = rs.getInt("pase");
+		            int defensa = rs.getInt("defensa");
+		            int salto = rs.getInt("salto");
+		            String d_of_birth = rs.getString("d_of_birth");  
+		            String ciudad = rs.getString("ciudad");
+		            float altura = rs.getFloat("altura");
+		            String mano = rs.getString("mano_habil");
+		            String especialidad = rs.getString("especialidad");
+		            String jugada = rs.getString("jugada");
+		            
+		            Jugador j = new Jugador(nombre, apellido, camiseta, media, posicion, nacionalidad, equipo, tiro, dribling, velocidad, pase, defensa, salto, 
+		            		d_of_birth, ciudad, altura, mano, especialidad, jugada);
+		            
+		            
+		            jugadores.add(j);
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		equipo.setJugadores(jugadores);
+	}
+	
+	//BUSCAR EQUIPO POR ID
+	public static Equipo buscarEquipoPorId(int id) {
+	    Equipo equipo = null;
+
+	    try (
+	        PreparedStatement stmt = con.prepareStatement("SELECT * FROM equipos WHERE id = ?");
+	    ) {
+	        stmt.setInt(1, id);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                String nombre = rs.getString("nombre");
+	                String ciudad = rs.getString("ciudad");
+	                String estadio = rs.getString("estadio");
+	                String fecha = rs.getString("fecha_de_fundacion");
+	                int temporadas = rs.getInt("temporadas_en_liga");
+	                int campeonatos = rs.getInt("campeonatos");
+
+	                equipo = new Equipo(nombre, ciudad, estadio, fecha, temporadas, campeonatos);
+	                 
+
+	                 
+	                cargarDT(equipo);
+	                cargarJugadores(equipo);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return equipo;
+	}
+	
+	public static Equipo buscarEquipoPorNombre(String nombre) {
+	    Equipo equipo = null;
+
+	    try (
+	        PreparedStatement stmt = con.prepareStatement("SELECT * FROM equipos WHERE nombre LIKE ?");
+	    ) {
+	    	stmt.setString(1, "%" + nombre + "%");
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                String nombreCompleto = rs.getString("nombre");
+	                String ciudad = rs.getString("ciudad");
+	                String estadio = rs.getString("estadio");
+	                String fecha = rs.getString("fecha_de_fundacion");
+	                int temporadas = rs.getInt("temporadas_en_liga");
+	                int campeonatos = rs.getInt("campeonatos");
+
+	                equipo = new Equipo(nombreCompleto, ciudad, estadio, fecha, temporadas, campeonatos);
+	                 
+
+	                 
+	                cargarDT(equipo);
+	                cargarJugadores(equipo);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return equipo;
+	}
+	
+	//BUSCAR ID DE EQUIPO
+	public static int buscarID(String nombre) {
+	    int id = -1;
+
+	    try (
+	        PreparedStatement stmt = con.prepareStatement("SELECT id FROM equipos WHERE nombre = ?")
+	    ) {
+	        stmt.setString(1, nombre);
+
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                id = rs.getInt("id");
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return id;
+	}
+
+
+}

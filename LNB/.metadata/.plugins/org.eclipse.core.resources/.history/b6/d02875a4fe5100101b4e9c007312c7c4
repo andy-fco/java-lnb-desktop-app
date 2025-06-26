@@ -1,0 +1,170 @@
+package GUI;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Aficionado;
+import BLL.Equipo;
+import javax.swing.JTabbedPane;
+import javax.swing.JLabel;
+import java.awt.Font;
+
+public class VerPlantel extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+
+			public void run(Aficionado user, Equipo equipo) {
+				try {
+					VerPlantel frame = new VerPlantel(user, equipo);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+
+	/**
+	 * Create the frame.
+	 */
+	public VerPlantel(Aficionado user, Equipo equipo) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 477);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		tabbedPane.setBounds(10, 10, 707, 407);
+		contentPane.add(tabbedPane);
+		
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("New tab", null, panel, null);
+		panel.setLayout(null);
+		
+		JLabel lblNombre = new JLabel("<dynamic> <dynamic>");
+		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		lblNombre.setBounds(47, 10, 338, 32);
+		panel.add(lblNombre);
+		
+		JLabel lblMedia = new JLabel("0");
+		lblMedia.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		lblMedia.setBounds(10, 10, 63, 32);
+		panel.add(lblMedia);
+		
+		JLabel lblCamiseta = new JLabel("#0");
+		lblCamiseta.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblCamiseta.setBounds(55, 41, 63, 32);
+		panel.add(lblCamiseta);
+		
+		JLabel lblPosicion = new JLabel((String) null);
+		lblPosicion.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblPosicion.setBounds(99, 41, 241, 32);
+		panel.add(lblPosicion);
+		
+		JLabel lblTiro = new JLabel("Tiro 0");
+		lblTiro.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblTiro.setBounds(10, 95, 131, 32);
+		panel.add(lblTiro);
+		
+		JLabel lblVelocidad = new JLabel("Velocidad 0");
+		lblVelocidad.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblVelocidad.setBounds(165, 95, 131, 32);
+		panel.add(lblVelocidad);
+		
+		JLabel lblDribling = new JLabel("Dribling 0");
+		lblDribling.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblDribling.setBounds(10, 182, 131, 32);
+		panel.add(lblDribling);
+		
+		JLabel lblDefensa = new JLabel("Defensa 0");
+		lblDefensa.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblDefensa.setBounds(165, 182, 131, 32);
+		panel.add(lblDefensa);
+		
+		JLabel lblPase = new JLabel("Pase 0");
+		lblPase.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblPase.setBounds(10, 255, 131, 32);
+		panel.add(lblPase);
+		
+		JLabel lblSalto = new JLabel("Salto 0");
+		lblSalto.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		lblSalto.setBounds(165, 255, 131, 32);
+		panel.add(lblSalto);
+		
+		JLabel lblManoHabil = new JLabel("Mano Hábil: <dynamic>");
+		lblManoHabil.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblManoHabil.setBounds(322, 95, 304, 32);
+		panel.add(lblManoHabil);
+		
+		JLabel lblEspecialidad = new JLabel("Especialidad: <dynamic>");
+		lblEspecialidad.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblEspecialidad.setBounds(322, 141, 304, 32);
+		panel.add(lblEspecialidad);
+		
+		JLabel lblJugada = new JLabel("Jugada Característica: <dynamic>");
+		lblJugada.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblJugada.setBounds(322, 185, 304, 32);
+		panel.add(lblJugada);
+		
+		JLabel lblAltura = new JLabel("Altura: 0.0m");
+		lblAltura.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblAltura.setBounds(322, 234, 241, 32);
+		panel.add(lblAltura);
+		
+		JLabel lblNacionalidad = new JLabel("Nacionalidad: <dynamic>");
+		lblNacionalidad.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNacionalidad.setBounds(322, 276, 304, 32);
+		panel.add(lblNacionalidad);
+		
+		JLabel lblCiudad = new JLabel("Ciudad: <dynamic>");
+		lblCiudad.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblCiudad.setBounds(322, 318, 304, 32);
+		panel.add(lblCiudad);
+		
+		JLabel lblFechaDeNacimiento = new JLabel("Fecha de Nacimiento: <dynamic>");
+		lblFechaDeNacimiento.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblFechaDeNacimiento.setBounds(322, 360, 304, 32);
+		panel.add(lblFechaDeNacimiento);
+		
+		JProgressBar progressTiro = new JProgressBar();
+		progressTiro.setBounds(10, 137, 146, 20);
+		panel.add(progressTiro);
+		
+		JProgressBar progressVel = new JProgressBar();
+		progressVel.setBounds(165, 137, 146, 20);
+		panel.add(progressVel);
+		
+		JProgressBar progressDri = new JProgressBar();
+		progressDri.setBounds(10, 225, 146, 20);
+		panel.add(progressDri);
+		
+		JProgressBar progressDef = new JProgressBar();
+		progressDef.setBounds(165, 225, 146, 20);
+		panel.add(progressDef);
+		
+		JProgressBar progressPase = new JProgressBar();
+		progressPase.setBounds(10, 297, 146, 20);
+		panel.add(progressPase);
+		
+		JProgressBar progressSalto = new JProgressBar();
+		progressSalto.setBounds(165, 296, 146, 20);
+		panel.add(progressSalto);
+		
+		
+		
+		
+		
+	}
+}
