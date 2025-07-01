@@ -1,0 +1,106 @@
+package GUI;
+
+
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+
+import BLL.Aficionado;
+
+import BLL.Evento;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class VerEvento extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+
+			public void run(Aficionado user, Evento e) {
+				try {
+					VerEvento frame = new VerEvento(user, e);
+					frame.setVisible(true);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+ 
+	/**
+	 * Create the frame.
+	 */
+	public VerEvento(Aficionado user, Evento e) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 731, 477);
+		contentPane = new JPanel();
+		setLocationRelativeTo(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Foro frame = new Foro(user);
+				frame.run(user);
+				dispose();
+			}
+		});
+		btnVolver.setBounds(10, 10, 85, 21);
+		contentPane.add(btnVolver);
+		
+		JLabel lblTitulo = new JLabel("<html><h1>"+e.getTitulo()+"</h1></html>");
+		lblTitulo.setBounds(10, 48, 561, 59);
+		contentPane.add(lblTitulo);
+		
+		JLabel lblFecha = new JLabel("¿Cuándo? El "+e.getFechaYHora().toLocalDate().toString()+" a las "+e.getFechaYHora().toLocalTime().toString());
+		lblFecha.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFecha.setBounds(10, 117, 267, 21);
+		contentPane.add(lblFecha);
+		
+		JTextArea txtDescripcion = new JTextArea();
+		txtDescripcion.setText(e.getDescripcion());
+		txtDescripcion.setLineWrap(true);
+		txtDescripcion.setWrapStyleWord(true);
+		txtDescripcion.setEditable(false);
+		txtDescripcion.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		JScrollPane scrollDescripcion = new JScrollPane(txtDescripcion);
+		scrollDescripcion.setBounds(10, 150, 697, 280);
+		contentPane.add(scrollDescripcion);
+		
+		JButton btnInscripcion = new JButton("Incribirme");
+		btnInscripcion.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnInscripcion.setBounds(581, 109, 126, 35);
+		contentPane.add(btnInscripcion);
+		
+		JButton btnCancelar = new JButton("Cancelar Inscripción");
+		btnCancelar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnCancelar.setBounds(548, 110, 159, 35);
+		contentPane.add(btnCancelar);
+		
+		if(a) {
+			btnInscripcion.setVisible(true);
+			btnCancelar.setVisible(false);
+		} else {
+			btnInscripcion.setVisible(false);
+			btnCancelar.setVisible(true);
+		}
+		
+		
+		
+		
+		
+	}
+}

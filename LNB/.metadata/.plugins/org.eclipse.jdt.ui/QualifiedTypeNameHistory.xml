@@ -9,9 +9,10 @@
     <fullyQualifiedTypeName name="javax.swing.SpinnerNumberModel"/>
     <fullyQualifiedTypeName name="BLL.Jugador"/>
     <fullyQualifiedTypeName name="java.lang.System"/>
-    <fullyQualifiedTypeName name="DLL.DLLAficionado"/>
     <fullyQualifiedTypeName name="DLL.DLLEquipo"/>
     <fullyQualifiedTypeName name="DLL.DLLJugador"/>
-    <fullyQualifiedTypeName name="javax.swing.JOptionPane"/>
     <fullyQualifiedTypeName name="GUI.GestionJugadores"/>
+    <fullyQualifiedTypeName name="DLL.DLLEvento"/>
+    <fullyQualifiedTypeName name="DLL.DLLAficionado"/>
+    <fullyQualifiedTypeName name="javax.swing.JOptionPane"/>
 </qualifiedTypeNameHistroy>

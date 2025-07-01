@@ -1,9 +1,0 @@
-package lnb;
-
-public interface Menu {
-
-	
-	public static void ingresar() {}
-	public void mostrarMenu();
-	
-}
